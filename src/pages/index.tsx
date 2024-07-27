@@ -1,5 +1,9 @@
-import { Box, Container } from '@mui/material';
+import React from 'react';
 
-export default function Home() {
-  return <Container></Container>;
-}
+import HomeView from '@/views/HomeView';
+
+const HomePage = () => {
+  return <HomeView />;
+};
+
+export default HomePage;

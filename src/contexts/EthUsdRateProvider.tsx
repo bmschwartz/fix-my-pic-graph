@@ -17,6 +17,7 @@ export const EthUsdRateProvider = ({ children }: EthUsdRateProviderProps) => {
 
   useEffect(() => {
     const fetchEthUsdRate = async () => {
+      console.log('Fetching rate');
       try {
         setEthToUsdRate(await getEthUsdRate());
       } catch (error) {
