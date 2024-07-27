@@ -1,0 +1,8 @@
+query GetPictureRequests {
+  pictureRequests {
+    id
+    title
+    description
+    createdAt
+  }
+}

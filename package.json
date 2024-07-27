@@ -16,6 +16,7 @@
     "start": "next start",
     "type-check": "tsc --noEmit",
     "compile": "hardhat compile && hardhat copy-artifacts",
+    "compile-gql": "graphclient build && mv .graphclient/* src/graphql/client/",
     "lint": "eslint --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
     "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
     "postinstall": "husky",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@commitlint/cli": "19.3.0",
     "@commitlint/config-conventional": "19.2.2",
+    "@graphprotocol/client-cli": "3.0.4",
     "@ianvs/prettier-plugin-sort-imports": "4.3.1",
     "@matterlabs/hardhat-zksync": "1.1.0",
     "@matterlabs/hardhat-zksync-deploy": "1.5.0",
@@ -71,6 +73,7 @@
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "eslint-config-prettier": "9.1.0",
+    "eslint-import-resolver-alias": "1.1.2",
     "eslint-import-resolver-typescript": "3.6.1",
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-prettier": "5.2.1",

@@ -11,6 +11,8 @@
 # testing
 /coverage
 
+richWallets
+
 # hardhat
 /artifacts-zk
 /cache-zk

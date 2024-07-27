@@ -1,0 +1,3 @@
+{
+  "c515d135f8490483bcf390447e980a3d9ce3bda867726cca4d609f190959cc03": "query GetPictureRequests {\n  pictureRequests {\n    id\n    title\n    description\n    createdAt\n  }\n}"
+}
