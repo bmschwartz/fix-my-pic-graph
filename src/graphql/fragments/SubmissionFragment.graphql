@@ -1,0 +1,10 @@
+fragment SubmissionFragment on RequestSubmission {
+  id
+  submitter
+  description
+  price
+  createdAt
+  freeImageId
+  watermarkedImageId
+  encryptedImageId
+}

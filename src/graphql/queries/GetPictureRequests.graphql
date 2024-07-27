@@ -3,6 +3,12 @@ query GetPictureRequests {
     id
     title
     description
+    imageId
+    budget
+    creator
     createdAt
+    comments {
+      ...CommentFragment
+    }
   }
 }

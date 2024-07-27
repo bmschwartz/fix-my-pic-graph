@@ -1,0 +1,6 @@
+fragment CommentFragment on RequestComment {
+  id
+  commenter
+  text
+  createdAt
+}
