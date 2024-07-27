@@ -1,11 +1,14 @@
-import { PictureRequestSubmission } from './submission';
+import { RequestComment } from './comment';
+import { RequestSubmission } from './submission';
 
 export interface PictureRequest {
-  address: string;
+  id: string;
   title: string;
-  description: string;
-  imageId: string;
   budget: number;
-  imageUrl: string;
-  submissions: PictureRequestSubmission[];
+  imageId: string;
+  description: string;
+  comments: RequestComment[];
+  submissions: RequestSubmission[];
 }
+
+export type PartialPictureRequest = Partial<PictureRequest>;

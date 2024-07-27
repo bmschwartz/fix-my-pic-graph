@@ -1,30 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import {
-  execute,
-  GetPictureRequestsDocument,
-  GetPictureRequestsQuery,
-  PictureRequest as GqlPictureRequest,
-} from '@/graphql/client';
+import PictureRequestList from '@/components/PictureRequestList';
 
 const HomeView = () => {
-  const [pictureRequests, setPictureRequests] = React.useState<GqlPictureRequest[]>([]);
-
-  useEffect(() => {
-    execute(GetPictureRequestsDocument, {}).then((result) => {
-      setPictureRequests(result?.data?.pictureRequests || []);
-    });
-  }, [setPictureRequests]);
-
   return (
     <div>
-      {pictureRequests && (
-        <ul>
-          {pictureRequests.map((pictureRequest) => (
-            <li key={pictureRequest.id}>{pictureRequest.title}</li>
-          ))}
-        </ul>
-      )}
+      <PictureRequestList />
     </div>
   );
 };

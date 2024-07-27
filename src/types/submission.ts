@@ -1,10 +1,14 @@
-export interface PictureRequestSubmission {
+import { SubmissionPurchase } from './purchase';
+
+export interface RequestSubmission {
+  id: string;
   price: number;
-  address: string;
   submitter: string;
   description: string;
-  purchasers: string[];
   freePictureId?: string;
   encryptedPictureId?: string;
   watermarkedPictureId?: string;
+  purchases: SubmissionPurchase[];
 }
+
+export type PartialRequestSubmission = Partial<RequestSubmission>;
