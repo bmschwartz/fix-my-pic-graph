@@ -11,6 +11,10 @@
 # testing
 /coverage
 
+# hardhat
+/artifacts-zk
+/cache-zk
+
 # next.js
 /.next/
 /out/
