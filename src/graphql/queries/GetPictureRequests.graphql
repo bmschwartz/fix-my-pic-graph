@@ -1,3 +1,6 @@
+#import { CommentFragment } from '../fragments/CommentFragment.graphql'
+#import { SubmissionFragment } from '../fragments/SubmissionFragment.graphql'
+
 query GetPictureRequests {
   pictureRequests {
     id
@@ -9,6 +12,9 @@ query GetPictureRequests {
     createdAt
     comments {
       ...CommentFragment
+    }
+    submissions {
+      ...SubmissionFragment
     }
   }
 }

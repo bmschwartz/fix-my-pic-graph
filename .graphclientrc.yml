@@ -6,3 +6,5 @@ sources:
 
 documents:
   - ./src/graphql/queries/GetPictureRequests.graphql
+  - ./src/graphql/fragments/CommentFragment.graphql
+  - ./src/graphql/fragments/SubmissionFragment.graphql

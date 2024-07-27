@@ -1337,7 +1337,7 @@ const merger = new(BareMerger as any)({
         store: rootStore.child('bareMerger')
       })
 const documentHashMap = {
-        "c515d135f8490483bcf390447e980a3d9ce3bda867726cca4d609f190959cc03": GetPictureRequestsDocument
+        "f9207af0e9c6b14053eab8232a6425ea2a844594cf5b8b2f4a1f1a8445746ae8": GetPictureRequestsDocument
       }
 additionalEnvelopPlugins.push(usePersistedOperations({
         getPersistedOperation(key) {
@@ -1364,7 +1364,7 @@ additionalEnvelopPlugins.push(usePersistedOperations({
           return printWithCache(GetPictureRequestsDocument);
         },
         location: 'GetPictureRequestsDocument.graphql',
-        sha256Hash: 'c515d135f8490483bcf390447e980a3d9ce3bda867726cca4d609f190959cc03'
+        sha256Hash: 'f9207af0e9c6b14053eab8232a6425ea2a844594cf5b8b2f4a1f1a8445746ae8'
       }
     ];
     },
@@ -1419,22 +1419,58 @@ export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(
   const sdkRequester$ = getBuiltGraphClient().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
   return getSdk<TOperationContext, TGlobalContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }
+export type CommentFragmentFragment = Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>;
+
+export type SubmissionFragmentFragment = Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>;
+
 export type GetPictureRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPictureRequestsQuery = { pictureRequests: Array<Pick<PictureRequest, 'id' | 'title' | 'description' | 'createdAt'>> };
+export type GetPictureRequestsQuery = { pictureRequests: Array<(
+    Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
+    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>> }
+  )> };
 
-
+export const CommentFragmentFragmentDoc = gql`
+    fragment CommentFragment on RequestComment {
+  id
+  commenter
+  text
+  createdAt
+}
+    ` as unknown as DocumentNode<CommentFragmentFragment, unknown>;
+export const SubmissionFragmentFragmentDoc = gql`
+    fragment SubmissionFragment on RequestSubmission {
+  id
+  submitter
+  description
+  price
+  createdAt
+  freeImageId
+  watermarkedImageId
+  encryptedImageId
+}
+    ` as unknown as DocumentNode<SubmissionFragmentFragment, unknown>;
 export const GetPictureRequestsDocument = gql`
     query GetPictureRequests {
   pictureRequests {
     id
     title
     description
+    imageId
+    budget
+    creator
     createdAt
+    comments {
+      ...CommentFragment
+    }
+    submissions {
+      ...SubmissionFragment
+    }
   }
 }
-    ` as unknown as DocumentNode<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>;
+    ${CommentFragmentFragmentDoc}
+${SubmissionFragmentFragmentDoc}` as unknown as DocumentNode<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>;
 
 
 export type Requester<C = {}, E = unknown> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>

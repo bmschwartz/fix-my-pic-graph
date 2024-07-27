@@ -8,14 +8,13 @@ import {
 } from '@/graphql/client';
 
 const HomeView = () => {
-  const [pictureRequestData, setPictureRequestData] = React.useState<GetPictureRequestsQuery>();
   const [pictureRequests, setPictureRequests] = React.useState<GqlPictureRequest[]>([]);
 
   useEffect(() => {
     execute(GetPictureRequestsDocument, {}).then((result) => {
       setPictureRequests(result?.data?.pictureRequests || []);
     });
-  }, [setPictureRequestData]);
+  }, [setPictureRequests]);
 
   return (
     <div>
