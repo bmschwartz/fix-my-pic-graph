@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HomeView from '@/views/HomeView';
+import HomeView from '@/views/home/HomeView';
 
 const HomePage = () => {
   return <HomeView />;

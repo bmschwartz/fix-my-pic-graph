@@ -13,11 +13,14 @@ const BackButton = ({ href }: BackButtonProps) => {
       <Box
         component="a"
         sx={{
-          display: 'flex',
+          display: 'inline-flex', // Change to inline-flex to wrap content
           alignItems: 'center',
           color: '#000',
           textDecoration: 'none',
           mb: 2,
+          '&:hover .underline': {
+            width: '100%',
+          },
         }}
       >
         <ArrowBackIcon sx={{ mr: 1 }} />
@@ -34,9 +37,6 @@ const BackButton = ({ href }: BackButtonProps) => {
               height: '2px',
               backgroundColor: '#000',
               transition: 'width 0.2s ease-in-out',
-            },
-            '&:hover .underline': {
-              width: '100%',
             },
           }}
         >

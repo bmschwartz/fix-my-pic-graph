@@ -1,3 +1,4 @@
+import { PhotoCamera } from '@mui/icons-material';
 import { Box, Grid, InputAdornment, TextField } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -31,114 +32,131 @@ const NewRequestForm: React.FC = () => {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{
-        maxWidth: 700,
-        margin: 'auto',
-        padding: 4,
-        borderRadius: 2,
-        boxShadow: 4,
-        bgcolor: 'background.paper',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
+      // sx={{
+      //   // maxWidth: 700,
+      //   margin: 'auto',
+      //   padding: 4,
+      //   borderRadius: 2,
+      //   boxShadow: 4,
+      //   display: 'flex',
+      //   flexDirection: 'column',
+      //   alignItems: 'center',
+      // }}
     >
-      <FMPTypography
-        variant="h6"
-        gutterBottom
-        sx={{
-          marginBottom: 3,
-          position: 'relative',
-          paddingBottom: 1,
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            left: '50%',
-            bottom: 0,
-            transform: 'translateX(-50%)',
-            width: '50%',
-            height: '4px',
-            backgroundColor: '#000000',
-            borderRadius: '2px',
-          },
-          fontWeight: 'bold',
-          letterSpacing: '0.1em',
-        }}
-      >
-        Create a New Request
-      </FMPTypography>
       <Grid container spacing={3} sx={{ width: '100%' }}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Description"
-            multiline
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Budget"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            required
-            InputProps={{
-              startAdornment: <InputAdornment position="start">$</InputAdornment>,
-              inputProps: { step: '0.01' },
-              type: 'number',
+        <Grid item xs={12} md={6}>
+          <Box
+            sx={{
+              bgcolor: 'background.paper',
+              padding: 3,
+              borderRadius: 2,
+              boxShadow: 2,
             }}
-            sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FMPButton variant="contained" component="label" sx={{ width: '100%' }}>
-            Upload Image
-            <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
-          </FMPButton>
-        </Grid>
-        {preview && (
-          <Grid item xs={12}>
-            <Box
+          >
+            <FMPTypography
+              variant="h6"
+              gutterBottom
               sx={{
-                marginTop: 2,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                width: '100%',
-                borderRadius: 2,
-                overflow: 'hidden',
+                marginBottom: 3,
+                position: 'relative',
+                paddingBottom: 1,
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  left: '50%',
+                  bottom: 0,
+                  transform: 'translateX(-50%)',
+                  width: '50%',
+                  height: '4px',
+                  backgroundColor: '#000000',
+                  borderRadius: '2px',
+                },
+                fontWeight: 'bold',
+                letterSpacing: '0.1em',
               }}
             >
+              Create a New Request
+            </FMPTypography>
+            <TextField
+              fullWidth
+              label="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              sx={{ backgroundColor: '#f9f9f9', borderRadius: 1, marginBottom: 3 }}
+            />
+            <TextField
+              fullWidth
+              label="Description"
+              multiline
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              sx={{ backgroundColor: '#f9f9f9', borderRadius: 1, marginBottom: 3 }}
+            />
+            <TextField
+              fullWidth
+              label="Budget"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              required
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                inputProps: { step: '0.01' },
+                type: 'number',
+              }}
+              sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px dashed #ccc',
+              borderRadius: 2,
+              padding: 2,
+              minHeight: '350px',
+              bgcolor: 'background.paper',
+            }}
+          >
+            {preview ? (
               <Box
                 sx={{
                   width: '100%',
                   height: 0,
-                  paddingBottom: '56.25%',
+                  paddingBottom: '56.25%', // 16:9 aspect ratio
                   position: 'relative',
                 }}
               >
                 <Image src={preview} alt="Image preview" layout="fill" objectFit="contain" />
               </Box>
-            </Box>
-          </Grid>
-        )}
-        <Grid item xs={12} sx={{ textAlign: 'end' }}>
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <PhotoCamera sx={{ fontSize: 40, mb: 1, color: '#ccc' }} />
+                <FMPTypography variant="body2" color="textSecondary">
+                  No image selected
+                </FMPTypography>
+              </Box>
+            )}
+            <FMPButton variant="contained" component="label" sx={{ mt: 2 }}>
+              Upload Image
+              <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+            </FMPButton>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sx={{ textAlign: 'center' }}>
           <FMPButton type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
             Create Request
           </FMPButton>

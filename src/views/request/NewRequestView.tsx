@@ -5,18 +5,9 @@ import { BackButton, NewRequestForm } from '@/components';
 
 const NewRequestView: React.FC = () => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
-        paddingTop: '64px',
-      }}
-    >
-      <Box sx={{ width: '100%', maxWidth: 700 }}>
-        <BackButton href="/" />
-        <NewRequestForm />
-      </Box>
+    <Box sx={{ padding: 2, margin: '32px' }}>
+      <BackButton href="/" />
+      <NewRequestForm />
     </Box>
   );
 };

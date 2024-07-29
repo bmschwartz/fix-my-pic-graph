@@ -1,17 +1,17 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import Link from 'next/link';
 import React from 'react';
 
-import RequestList from '@/components/request/RequestList';
+import { FMPButton, RequestList } from '@/components';
 
 const HomeView: React.FC = () => {
   return (
     <Box sx={{ position: 'relative', padding: 2 }}>
       <Box sx={{ position: 'absolute', top: 0, right: 0, padding: 2 }}>
         <Link href="/request/new" passHref>
-          <Button variant="contained" color="primary">
+          <FMPButton type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
             Create Request
-          </Button>
+          </FMPButton>
         </Link>
       </Box>
       <RequestList />
