@@ -1,22 +1,19 @@
+import ImageList from '@mui/material/ImageList';
 import React from 'react';
 
 import { usePictureRequests } from '@/hooks/usePictureRequests';
 import { PictureRequest } from '@/types/pictureRequest';
-import PictureRequestListCard from './PictureRequestListItem';
+import PictureRequestListItem from './PictureRequestListItem';
 
-const PictureRequestList = () => {
+const PictureRequestList: React.FC = () => {
   const pictureRequests = usePictureRequests();
 
   return (
-    <div>
-      {pictureRequests && (
-        <ul>
-          {pictureRequests.map((pictureRequest: PictureRequest) => (
-            <PictureRequestListCard key={pictureRequest.id} pictureRequest={pictureRequest} />
-          ))}
-        </ul>
-      )}
-    </div>
+    <ImageList variant="masonry" cols={3} gap={8}>
+      {pictureRequests.map((pictureRequest: PictureRequest) => (
+        <PictureRequestListItem key={pictureRequest.id} pictureRequest={pictureRequest} />
+      ))}
+    </ImageList>
   );
 };
 
