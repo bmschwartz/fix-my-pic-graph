@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EthUsdRateContext, EthUsdRateContextType } from '@/contexts/EthUsdRateProvider';
+import { EthUsdRateContext, EthUsdRateContextType } from '@/contexts/EthUsdRateContext';
 
 export const useEthUsdRate = (): EthUsdRateContextType => {
   const context = useContext(EthUsdRateContext);

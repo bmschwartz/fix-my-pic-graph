@@ -1,9 +1,9 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 
-import FullScreenLoader from '@/components/FullScreenLoader';
+import { FullScreenLoader } from '@/components';
 import { FixMyPicContractService, getFixMyPicContractService } from '@/services/contractService';
-import { EthUsdRateProvider } from './EthUsdRateProvider';
-import { WalletProvider } from './WalletProvider';
+import { EthUsdRateProvider } from './EthUsdRateContext';
+import { WalletProvider } from './WalletContext';
 
 interface AppProvidersProps {
   children: ReactNode;

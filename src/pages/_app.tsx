@@ -1,6 +1,6 @@
 import Head from 'next/head';
 
-import AppProviders from '@/contexts/AppProviders';
+import AppProviders from '@/contexts/AppContextProviders';
 import { MainLayout } from '@/layouts';
 
 import type { NextPage } from 'next';

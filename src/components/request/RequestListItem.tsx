@@ -5,11 +5,11 @@ import React from 'react';
 import { PictureRequest } from '@/types/pictureRequest';
 import { getImageUrl } from '@/utils/getImage';
 
-interface PictureRequestListItemProps {
+interface RequestListItemProps {
   pictureRequest: PictureRequest;
 }
 
-const PictureRequestListItem: React.FC<PictureRequestListItemProps> = ({ pictureRequest }) => {
+const RequestListItem: React.FC<RequestListItemProps> = ({ pictureRequest }) => {
   const imageUrl = getImageUrl(pictureRequest.imageId);
 
   return (
@@ -52,4 +52,4 @@ const PictureRequestListItem: React.FC<PictureRequestListItemProps> = ({ picture
   );
 };
 
-export default PictureRequestListItem;
+export default RequestListItem;

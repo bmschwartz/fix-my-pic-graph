@@ -3,18 +3,18 @@ import React from 'react';
 
 import { usePictureRequests } from '@/hooks/usePictureRequests';
 import { PictureRequest } from '@/types/pictureRequest';
-import PictureRequestListItem from './PictureRequestListItem';
+import RequestListItem from './RequestListItem';
 
-const PictureRequestList: React.FC = () => {
+const RequestList: React.FC = () => {
   const pictureRequests = usePictureRequests();
 
   return (
     <ImageList variant="masonry" cols={3} gap={8}>
       {pictureRequests.map((pictureRequest: PictureRequest) => (
-        <PictureRequestListItem key={pictureRequest.id} pictureRequest={pictureRequest} />
+        <RequestListItem key={pictureRequest.id} pictureRequest={pictureRequest} />
       ))}
     </ImageList>
   );
 };
 
-export default PictureRequestList;
+export default RequestList;
