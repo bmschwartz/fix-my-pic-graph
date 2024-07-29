@@ -11,25 +11,22 @@ const NewRequestView: React.FC = () => {
     await connectWallet(walletUuid);
   };
 
-  console.log('wallets', wallets);
-
   return (
     <Box
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
         minHeight: '100vh',
         bgcolor: 'background.default',
+        paddingTop: '64px',
       }}
     >
       {selectedAccount && selectedWallet ? (
-        <div>
-          {selectedWallet.info.name}
+        <Box sx={{ width: '100%', maxWidth: '600px', mt: 4 }}>
           <NewRequestForm />
-        </div>
+        </Box>
       ) : (
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Typography variant="h4" gutterBottom>
             Connect Your Wallet
           </Typography>
@@ -39,7 +36,7 @@ const NewRequestView: React.FC = () => {
           {Object.keys(wallets).length > 0 ? (
             <List>
               {Object.keys(wallets).map((walletUuid) => (
-                <ListItem key={walletUuid} button onClick={() => handleConnectWallet(walletUuid)}>
+                <ListItem key={walletUuid} component="button" onClick={() => handleConnectWallet(walletUuid)}>
                   <ListItemText primary={wallets[walletUuid].info.name} />
                 </ListItem>
               ))}

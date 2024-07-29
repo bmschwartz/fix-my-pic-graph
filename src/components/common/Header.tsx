@@ -1,11 +1,11 @@
-import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
+import { AppBar, Avatar, Button, Toolbar, Typography } from '@mui/material';
 import React, { useState } from 'react';
 
-import { ConnectWalletDialog } from '@/components';
+import ConnectWalletDialog from '@/components/wallet/ConnectWalletDialog';
 import { useWallet } from '@/hooks/useWallet';
 
 const Header: React.FC = () => {
-  const { selectedWallet, selectedAccount } = useWallet();
+  const { selectedWallet, selectedAccount, disconnectWallet } = useWallet();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleOpenDialog = () => {
@@ -18,20 +18,48 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: '#000000' }}>
+        {' '}
+        {/* Black background */}
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, color: '#FFFFFF' }}>
+            {' '}
+            {/* White text color */}
             Fix My Pic
           </Typography>
           {selectedWallet && selectedAccount ? (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body1" sx={{ marginRight: 2 }}>
-                {selectedWallet.info.name}
-              </Typography>
-              <Typography variant="body1">{selectedAccount}</Typography>
-            </Box>
+            <Button
+              onClick={disconnectWallet}
+              sx={{
+                color: '#000000', // Black text color
+                backgroundColor: '#FFFFFF', // White background
+                '&:hover': {
+                  backgroundColor: '#f0f0f0', // Slightly darker white on hover
+                },
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              startIcon={
+                <Avatar
+                  src={selectedWallet.info.icon}
+                  alt={selectedWallet.info.name}
+                  sx={{ width: 24, height: 24, marginRight: 1 }}
+                />
+              }
+            >
+              Disconnect {selectedWallet.info.name}
+            </Button>
           ) : (
-            <Button color="inherit" onClick={handleOpenDialog}>
+            <Button
+              onClick={handleOpenDialog}
+              sx={{
+                color: '#000000', // Black text color
+                backgroundColor: '#FFFFFF', // White background
+                '&:hover': {
+                  backgroundColor: '#f0f0f0', // Slightly darker white on hover
+                },
+              }}
+            >
               Connect Wallet
             </Button>
           )}

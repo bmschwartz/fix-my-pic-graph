@@ -1,6 +1,8 @@
+import { CssBaseline } from '@mui/material';
 import Head from 'next/head';
 
 import AppProviders from '@/contexts/AppContextProviders';
+import { WalletProvider } from '@/contexts/WalletContext';
 import { MainLayout } from '@/layouts';
 
 import type { NextPage } from 'next';
@@ -20,10 +22,13 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <AppProviders>
-      <Head>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
-      <main>{getLayout(<Component {...pageProps} />)}</main>
+      <CssBaseline />
+      <WalletProvider>
+        <Head>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+        </Head>
+        <main>{getLayout(<Component {...pageProps} />)}</main>
+      </WalletProvider>
     </AppProviders>
   );
 }

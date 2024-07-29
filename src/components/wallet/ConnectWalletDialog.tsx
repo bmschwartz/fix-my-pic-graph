@@ -5,8 +5,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
-  Paper,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   Typography,
 } from '@mui/material';
 import React from 'react';
@@ -28,36 +30,59 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = ({ open, onClose
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Connect Wallet</DialogTitle>
-      <DialogContent>
-        <Grid container spacing={2}>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ backgroundColor: '#000000', marginBottom: 2 }}>
+        <Typography variant="h6" sx={{ color: '#FFFFFF' }}>
+          Connect Wallet
+        </Typography>
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: '#FFFFFF', paddingTop: 1, paddingBottom: 1 }}>
+        <List>
           {Object.keys(wallets).length > 0 ? (
             Object.values(wallets).map((provider: EIP6963ProviderDetail) => (
-              <Grid item xs={12} sm={6} md={4} key={provider.info.uuid}>
-                <Paper elevation={3} style={{ padding: '16px', textAlign: 'center' }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={() => handleConnectWallet(provider.info.rdns)}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-                  >
-                    <Avatar src={provider.info.icon} alt={provider.info.name} style={{ marginBottom: '8px' }} />
-                    <Typography variant="h6">{provider.info.name}</Typography>
-                  </Button>
-                </Paper>
-              </Grid>
+              <ListItem
+                component="button"
+                onClick={() => handleConnectWallet(provider.info.rdns)}
+                key={provider.info.uuid}
+                sx={{
+                  color: '#000000',
+                  border: '2px solid #000000',
+                  borderRadius: '8px',
+                  marginBottom: '8px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0',
+                  },
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '8px 16px',
+                  textAlign: 'left',
+                  backgroundColor: 'transparent',
+                  width: '100%',
+                  outline: 'none',
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar src={provider.info.icon} alt={provider.info.name} sx={{ backgroundColor: '#FFFFFF' }} />
+                </ListItemAvatar>
+                <ListItemText primary={provider.info.name} />
+              </ListItem>
             ))
           ) : (
-            <Grid item xs={12}>
-              <Typography variant="body1">There are no Announced Providers</Typography>
-            </Grid>
+            <ListItem>
+              <ListItemText
+                primary={
+                  <Typography variant="body1" sx={{ color: '#000000' }}>
+                    There are no announced providers
+                  </Typography>
+                }
+              />
+            </ListItem>
           )}
-        </Grid>
+        </List>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
+      <DialogActions sx={{ backgroundColor: '#000000' }}>
+        <Button onClick={onClose} sx={{ color: '#FFFFFF' }}>
           Close
         </Button>
       </DialogActions>
