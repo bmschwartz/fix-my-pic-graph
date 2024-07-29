@@ -9,7 +9,6 @@ const NewRequestView: React.FC = () => {
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        minHeight: '100vh',
         bgcolor: 'background.default',
         paddingTop: '64px',
       }}

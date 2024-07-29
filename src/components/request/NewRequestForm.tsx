@@ -138,8 +138,8 @@ const NewRequestForm: React.FC = () => {
             </Box>
           </Grid>
         )}
-        <Grid item xs={12}>
-          <FMPButton type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+        <Grid item xs={12} sx={{ textAlign: 'end' }}>
+          <FMPButton type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
             Create Request
           </FMPButton>
         </Grid>
