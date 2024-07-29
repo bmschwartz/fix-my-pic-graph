@@ -15,6 +15,7 @@ import React from 'react';
 
 import { useWallet } from '@/hooks/useWallet';
 import { EIP6963ProviderDetail } from '@/types/eip6963';
+import FMPTypography from '../common/FMPTypography';
 
 interface ConnectWalletDialogProps {
   open: boolean;
@@ -31,12 +32,12 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = ({ open, onClose
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ backgroundColor: '#000000', marginBottom: 2 }}>
-        <Typography variant="h6" sx={{ color: '#FFFFFF' }}>
+      <DialogTitle sx={{ backgroundColor: '#FFFFFF' }}>
+        <FMPTypography variant="h6" sx={{ color: '#000000', fontWeight: 'bold' }}>
           Connect Wallet
-        </Typography>
+        </FMPTypography>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: '#FFFFFF', paddingTop: 1, paddingBottom: 1 }}>
+      <DialogContent sx={{ backgroundColor: '#FFFFFF', paddingBottom: 1 }}>
         <List>
           {Object.keys(wallets).length > 0 ? (
             Object.values(wallets).map((provider: EIP6963ProviderDetail) => (
@@ -81,8 +82,8 @@ const ConnectWalletDialog: React.FC<ConnectWalletDialogProps> = ({ open, onClose
           )}
         </List>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: '#000000' }}>
-        <Button onClick={onClose} sx={{ color: '#FFFFFF' }}>
+      <DialogActions sx={{ backgroundColor: '#FFFFFF' }}>
+        <Button onClick={onClose} sx={{ color: '#000000', fontWeight: 'bold' }}>
           Close
         </Button>
       </DialogActions>

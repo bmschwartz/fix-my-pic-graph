@@ -13,6 +13,7 @@ const FMPButton: React.FC<ButtonProps> = ({ children, sx, ...props }) => {
         '&:hover': {
           backgroundColor: '#f0f0f0',
         },
+        padding: '8px 16px',
         fontWeight: 600,
         ...sx,
       }}

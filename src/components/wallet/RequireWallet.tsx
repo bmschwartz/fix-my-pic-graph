@@ -1,7 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import React, { useState } from 'react';
 
-import { ConnectWalletDialog, FMPButton } from '@/components';
+import { ConnectWalletDialog, FMPButton, FMPTypography } from '@/components';
 import { useWallet } from '@/hooks/useWallet';
 
 interface RequireWalletProps {
@@ -29,17 +29,16 @@ const RequireWallet: React.FC<RequireWalletProps> = ({ children }) => {
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
+        minHeight: '10vh',
         textAlign: 'center',
         bgcolor: 'background.default',
         padding: '24px',
       }}
     >
       <Box sx={{ maxWidth: '700px', width: '100%', padding: '24px', borderRadius: '8px', boxShadow: 3 }}>
-        <Typography variant="h6" gutterBottom>
+        <FMPTypography variant="h6" gutterBottom>
           You need to connect your Web3 wallet to access this content.
-        </Typography>
+        </FMPTypography>
         <FMPButton onClick={handleOpenDialog} sx={{ marginTop: '16px' }}>
           Connect Wallet
         </FMPButton>
