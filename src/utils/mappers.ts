@@ -48,7 +48,7 @@ const mapRequestSubmission = (submission: GqlRequestSubmission): RequestSubmissi
   };
 };
 
-export const mapPictureRequest = (pictureRequest: GqlPictureRequest, ethToUsdRate: number): PartialPictureRequest => {
+export const mapPictureRequest = (pictureRequest: GqlPictureRequest): PartialPictureRequest => {
   return removeNullishValues({
     id: pictureRequest.id,
     title: pictureRequest.title,
