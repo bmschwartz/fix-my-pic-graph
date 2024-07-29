@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
 
-import { NewRequestForm } from '@/components';
+import { BackButton, NewRequestForm } from '@/components';
 
 const NewRequestView: React.FC = () => {
   return (
@@ -14,6 +14,7 @@ const NewRequestView: React.FC = () => {
       }}
     >
       <Box sx={{ width: '100%', maxWidth: 700 }}>
+        <BackButton href="/" />
         <NewRequestForm />
       </Box>
     </Box>

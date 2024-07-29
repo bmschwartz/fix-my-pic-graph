@@ -9,6 +9,8 @@ import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import type { ReactElement, ReactNode } from 'react';
 
+import '@/styles/globals.css';
+
 export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
