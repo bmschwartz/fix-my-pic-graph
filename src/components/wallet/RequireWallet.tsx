@@ -35,7 +35,7 @@ const RequireWallet: React.FC<RequireWalletProps> = ({ children }) => {
         padding: '24px',
       }}
     >
-      <Box sx={{ maxWidth: '700px', width: '100%', padding: '24px', borderRadius: '8px', boxShadow: 3 }}>
+      <Box sx={{ maxWidth: 700, width: '100%', padding: '24px', borderRadius: '8px', boxShadow: 3 }}>
         <FMPTypography variant="h6" gutterBottom>
           You need to connect your Web3 wallet to access this content.
         </FMPTypography>

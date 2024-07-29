@@ -1,18 +1,20 @@
-import { Box, Button, Grid, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, Grid, InputAdornment, TextField } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
+
+import { FMPButton, FMPTypography } from '@/components';
 
 const NewRequestForm: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
-  // const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     if (file) {
-      // setImage(file);
+      setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
@@ -23,7 +25,6 @@ const NewRequestForm: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle form submission logic here
   };
 
   return (
@@ -31,20 +32,51 @@ const NewRequestForm: React.FC = () => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        maxWidth: 600,
+        maxWidth: 700,
         margin: 'auto',
-        padding: 3,
-        borderRadius: 1,
-        boxShadow: 3,
+        padding: 4,
+        borderRadius: 2,
+        boxShadow: 4,
         bgcolor: 'background.paper',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
-      <Typography variant="h4" component="h1" gutterBottom>
+      <FMPTypography
+        variant="h6"
+        gutterBottom
+        sx={{
+          marginBottom: 3,
+          position: 'relative',
+          paddingBottom: 1,
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            left: '50%',
+            bottom: 0,
+            transform: 'translateX(-50%)',
+            width: '50%',
+            height: '4px',
+            backgroundColor: '#000000',
+            borderRadius: '2px',
+          },
+          fontWeight: 'bold',
+          letterSpacing: '0.1em',
+        }}
+      >
         Create a New Request
-      </Typography>
-      <Grid container spacing={2}>
+      </FMPTypography>
+      <Grid container spacing={3} sx={{ width: '100%' }}>
         <Grid item xs={12}>
-          <TextField fullWidth label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <TextField
+            fullWidth
+            label="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
+          />
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -55,6 +87,7 @@ const NewRequestForm: React.FC = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
           />
         </Grid>
         <Grid item xs={12}>
@@ -69,13 +102,14 @@ const NewRequestForm: React.FC = () => {
               inputProps: { step: '0.01' },
               type: 'number',
             }}
+            sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" component="label">
+          <FMPButton variant="contained" component="label" sx={{ width: '100%' }}>
             Upload Image
             <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
-          </Button>
+          </FMPButton>
         </Grid>
         {preview && (
           <Grid item xs={12}>
@@ -86,16 +120,16 @@ const NewRequestForm: React.FC = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
+                width: '100%',
+                borderRadius: 2,
+                overflow: 'hidden',
               }}
             >
-              <Typography variant="subtitle1" gutterBottom>
-                Image Preview:
-              </Typography>
               <Box
                 sx={{
                   width: '100%',
                   height: 0,
-                  paddingBottom: '56.25%', // 16:9 aspect ratio
+                  paddingBottom: '56.25%',
                   position: 'relative',
                 }}
               >
@@ -105,9 +139,9 @@ const NewRequestForm: React.FC = () => {
           </Grid>
         )}
         <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
+          <FMPButton type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
             Create Request
-          </Button>
+          </FMPButton>
         </Grid>
       </Grid>
     </Box>
