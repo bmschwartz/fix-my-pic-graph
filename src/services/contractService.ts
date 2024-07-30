@@ -41,17 +41,18 @@ const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || '';
 const FIX_MY_PIC_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_FIX_MY_PIC_FACTORY_ADDRESS || '';
 
 if (!RPC_URL) {
-  process.exit('No RPC URL provided');
+  console.error('No RPC URL provided');
 }
 if (!FIX_MY_PIC_FACTORY_ADDRESS) {
-  process.exit('No picture factory address provided');
+  console.error('No picture factory address provided');
 }
 
 export interface FixMyPicContractService {
+  createPictureRequest(params: CreatePictureRequestParams): Promise<string | null>;
   createSubmission(params: CreateSubmissionsParams): Promise<boolean>;
-  purchaseSubmission(params: PurchaseSubmissionParams): Promise<boolean>;
-  createPictureRequest(params: CreatePictureRequestParams): Promise<boolean>;
   createRequestComment(params: CreateRequestCommentParams): Promise<boolean>;
+
+  purchaseSubmission(params: PurchaseSubmissionParams): Promise<boolean>;
 }
 
 async function createFixMyPicContractService(factoryAddress: string): Promise<FixMyPicContractService> {
@@ -68,20 +69,44 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
     expiresAt,
     wallet,
     account,
-  }: CreatePictureRequestParams): Promise<boolean> => {
+  }: CreatePictureRequestParams): Promise<string | null> => {
     const fixMyPicFactory = new Contract(factoryAddress, FixMyPicFactorySchema.abi, await _getSigner(wallet, account));
 
     const budgetEth = await convertUsdToEthWithoutRate(budget);
     const budgetInWei = ethers.parseEther(budgetEth);
 
     try {
-      const tx = await fixMyPicFactory.createPictureRequest(title, description, imageId, budgetInWei, expiresAt || 0);
+      const tx = await fixMyPicFactory.createPictureRequest(
+        title,
+        description,
+        imageId,
+        budgetInWei,
+        expiresAt || 1722865505
+      );
       const receipt: ContractTransactionReceipt = await tx.wait();
 
-      if (receipt.status !== 1 || !receipt.contractAddress) {
+      if (receipt.status !== 1) {
         throw new Error('Failed to create image request');
       }
-      return true;
+
+      const event = receipt.logs.find(
+        (log) =>
+          log.address === factoryAddress &&
+          log.topics[0] ===
+            ethers.id('PictureRequestCreated(address,string,string,string,uint256,address,uint256,uint256)')
+      );
+
+      if (!event) {
+        console.log('DEBUG no event found', receipt.logs);
+        return null;
+      }
+
+      const decodedEvent = fixMyPicFactory.interface.parseLog(event);
+      console.log('DEBUG decoded event', decodedEvent);
+      const pictureRequestAddress: string | null = decodedEvent?.args.request;
+      console.log('DEBUG picture request address', pictureRequestAddress);
+
+      return pictureRequestAddress;
     } catch (error) {
       console.error('Unable to create the image request:', error, typeof error);
       throw error;

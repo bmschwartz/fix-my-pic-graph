@@ -20,6 +20,7 @@
     "lint": "eslint --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
     "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
     "postinstall": "husky",
+    "preinstall": "npx only-allow pnpm",
     "test": "NODE_ENV=test hardhat test"
   },
   "lint-staged": {
@@ -36,7 +37,6 @@
     "@nomiclabs/hardhat-ethers": "2.2.3",
     "@nomiclabs/hardhat-waffle": "2.0.6",
     "axios": "1.7.2",
-    "crypto": "1.0.1",
     "dotenv": "16.4.5",
     "ethers": "6.13.2",
     "formidable": "3.5.1",
@@ -48,7 +48,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "sharp-watermark": "0.5.3",
-    "zksync-ethers": "6.11.0"
+    "zksync-ethers": "6.9.0"
   },
   "devDependencies": {
     "@commitlint/cli": "19.3.0",

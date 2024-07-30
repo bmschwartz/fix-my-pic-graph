@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { RequireWallet } from '@/components';
-import NewRequestView from '@/views/request/NewRequestView';
+import NewRequestView from '@/views/Request/NewRequestView';
 
 const NewRequestPage: React.FC = () => {
   return (

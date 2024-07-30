@@ -1,19 +1,26 @@
 import { PhotoCamera } from '@mui/icons-material';
 import { Box, Grid, InputAdornment, TextField } from '@mui/material';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import { FMPButton, FMPTypography } from '@/components';
 import { useContractService } from '@/hooks/useContractService';
+import { useImageStore } from '@/hooks/useImageStore';
 import { useWallet } from '@/hooks/useWallet';
+import LoadingOverlay from '../common/LoadingOverlay';
 
 const NewRequestForm: React.FC = () => {
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingLabel, setLoadingLabel] = useState('');
 
+  const { uploadImage } = useImageStore();
   const { contractService } = useContractService();
   const { selectedAccount: account, selectedWallet: wallet } = useWallet();
 
@@ -29,13 +36,40 @@ const NewRequestForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!account || !wallet || !image) {
+    if (!account || !wallet || !title || !image || !description || Number.isNaN(budget)) {
       return;
     }
+    setLoading(true);
 
-    contractService.createPictureRequest({ account, title, description, budget: parseFloat(budget), image });
+    try {
+      setLoadingLabel('Uploading image...');
+      const imageId = await uploadImage({ file: image });
+
+      setLoadingLabel('Creating smart contract...');
+      const requestId = await contractService.createPictureRequest({
+        account,
+        title,
+        description,
+        budget: parseFloat(budget),
+        imageId,
+        wallet,
+      });
+      requestId ? router.push(`/request/${requestId}`) : router.push('/');
+      return;
+    } catch (e) {
+      console.error(e);
+      return;
+    } finally {
+      setLoading(false);
+      setTitle('');
+      setDescription('');
+      setBudget('');
+      setImage(null);
+      setPreview(null);
+      setLoadingLabel('');
+    }
   };
 
   return (
@@ -79,6 +113,7 @@ const NewRequestForm: React.FC = () => {
               fullWidth
               label="Title"
               value={title}
+              disabled={loading}
               onChange={(e) => setTitle(e.target.value)}
               required
               sx={{
@@ -103,6 +138,7 @@ const NewRequestForm: React.FC = () => {
               multiline
               rows={4}
               value={description}
+              disabled={loading}
               onChange={(e) => setDescription(e.target.value)}
               required
               sx={{
@@ -125,6 +161,7 @@ const NewRequestForm: React.FC = () => {
               fullWidth
               label="Budget"
               value={budget}
+              disabled={loading}
               onChange={(e) => setBudget(e.target.value)}
               required
               InputProps={{
@@ -189,18 +226,19 @@ const NewRequestForm: React.FC = () => {
                 </FMPTypography>
               </Box>
             )}
-            <FMPButton variant="contained" component="label" sx={{ mt: 2 }}>
+            <FMPButton variant="contained" component="label" sx={{ mt: 2 }} disabled={loading}>
               Upload Image
               <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
             </FMPButton>
           </Box>
         </Grid>
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <FMPButton type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
+          <FMPButton type="submit" variant="contained" color="primary" disabled={loading} sx={{ marginTop: 2 }}>
             Create Request
           </FMPButton>
         </Grid>
       </Grid>
+      <LoadingOverlay loading={loading} label={loadingLabel} />
     </Box>
   );
 };

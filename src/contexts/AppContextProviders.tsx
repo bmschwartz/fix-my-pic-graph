@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 
 import { FullScreenLoader } from '@/components';
 import { FixMyPicContractService, getFixMyPicContractService } from '@/services/contractService';
+import { ContractServiceProvider } from './ContractServiceContext';
 import { EthUsdRateProvider } from './EthUsdRateContext';
 import { WalletProvider } from './WalletContext';
 
@@ -30,7 +31,9 @@ const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
 
   return (
     <EthUsdRateProvider>
-      <WalletProvider>{children}</WalletProvider>
+      <ContractServiceProvider contractService={contractService}>
+        <WalletProvider>{children}</WalletProvider>
+      </ContractServiceProvider>
     </EthUsdRateProvider>
   );
 };
