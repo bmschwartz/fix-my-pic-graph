@@ -29,20 +29,7 @@ const NewRequestForm: React.FC = () => {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      // sx={{
-      //   // maxWidth: 700,
-      //   margin: 'auto',
-      //   padding: 4,
-      //   borderRadius: 2,
-      //   boxShadow: 4,
-      //   display: 'flex',
-      //   flexDirection: 'column',
-      //   alignItems: 'center',
-      // }}
-    >
+    <Box component="form" onSubmit={handleSubmit}>
       <Grid container spacing={3} sx={{ width: '100%' }}>
         <Grid item xs={12} md={6}>
           <Box
@@ -57,6 +44,7 @@ const NewRequestForm: React.FC = () => {
               variant="h6"
               gutterBottom
               sx={{
+                textAlign: 'center', // Center the text
                 marginBottom: 3,
                 position: 'relative',
                 paddingBottom: 1,
@@ -67,7 +55,7 @@ const NewRequestForm: React.FC = () => {
                   bottom: 0,
                   transform: 'translateX(-50%)',
                   width: '50%',
-                  height: '4px',
+                  height: '2px',
                   backgroundColor: '#000000',
                   borderRadius: '2px',
                 },
@@ -75,7 +63,7 @@ const NewRequestForm: React.FC = () => {
                 letterSpacing: '0.1em',
               }}
             >
-              Create a New Request
+              New Request
             </FMPTypography>
             <TextField
               fullWidth
@@ -83,7 +71,21 @@ const NewRequestForm: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              sx={{ backgroundColor: '#f9f9f9', borderRadius: 1, marginBottom: 3 }}
+              sx={{
+                backgroundColor: '#f9f9f9',
+                borderRadius: 1,
+                marginBottom: 3,
+                '& .MuiOutlinedInput-root': {
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#000000',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  '&.Mui-focused': {
+                    color: '#000000',
+                  },
+                },
+              }}
             />
             <TextField
               fullWidth
@@ -93,7 +95,21 @@ const NewRequestForm: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              sx={{ backgroundColor: '#f9f9f9', borderRadius: 1, marginBottom: 3 }}
+              sx={{
+                backgroundColor: '#f9f9f9',
+                borderRadius: 1,
+                marginBottom: 3,
+                '& .MuiOutlinedInput-root': {
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#000000',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  '&.Mui-focused': {
+                    color: '#000000',
+                  },
+                },
+              }}
             />
             <TextField
               fullWidth
@@ -106,7 +122,20 @@ const NewRequestForm: React.FC = () => {
                 inputProps: { step: '0.01' },
                 type: 'number',
               }}
-              sx={{ backgroundColor: '#f9f9f9', borderRadius: 1 }}
+              sx={{
+                backgroundColor: '#f9f9f9',
+                borderRadius: 1,
+                '& .MuiOutlinedInput-root': {
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#000000',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  '&.Mui-focused': {
+                    color: '#000000',
+                  },
+                },
+              }}
             />
           </Box>
         </Grid>

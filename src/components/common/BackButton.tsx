@@ -7,13 +7,13 @@ interface BackButtonProps {
   href: string;
 }
 
-const BackButton = ({ href }: BackButtonProps) => {
+const BackButton: React.FC<BackButtonProps> = ({ href }: BackButtonProps) => {
   return (
     <Link href={href} passHref>
       <Box
         component="a"
         sx={{
-          display: 'inline-flex', // Change to inline-flex to wrap content
+          display: 'inline-flex',
           alignItems: 'center',
           color: '#000',
           textDecoration: 'none',
