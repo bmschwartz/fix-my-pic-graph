@@ -9,7 +9,7 @@ const RequestList: React.FC = () => {
   const requests = useRequests();
 
   return (
-    <ImageList variant="masonry" cols={3} gap={8}>
+    <ImageList variant="masonry" cols={3} gap={16}>
       {requests.map((request: PictureRequest) => (
         <RequestListItem key={request.id} pictureRequest={request} />
       ))}
