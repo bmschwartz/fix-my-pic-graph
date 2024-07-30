@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, ImageListItem, Typography } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
@@ -13,23 +13,24 @@ const RequestListItem: React.FC<RequestListItemProps> = ({ pictureRequest }) => 
   const imageUrl = getImageUrl(pictureRequest.imageId);
 
   return (
-    <Box
+    <ImageListItem
       sx={{
         position: 'relative',
         '&:hover .overlay': {
           opacity: 1,
         },
-        border: '1px solid #e0e0e0',
         overflow: 'hidden',
       }}
     >
-      <Box sx={{ position: 'relative', width: '100%', height: 'auto', paddingBottom: '100%' }}>
+      <Box sx={{ position: 'relative', width: '100%', height: 'auto' }}>
         <Image
           src={imageUrl}
           alt={pictureRequest.title}
-          layout="fill"
+          layout="responsive"
+          width={248}
+          height={248}
           objectFit="contain"
-          style={{ display: 'block', position: 'absolute' }}
+          style={{ width: '100%', height: 'auto' }}
         />
       </Box>
       <Box
@@ -49,7 +50,7 @@ const RequestListItem: React.FC<RequestListItemProps> = ({ pictureRequest }) => 
         <Typography variant="h6">{pictureRequest.title}</Typography>
         <Typography variant="subtitle1">${pictureRequest.budget}</Typography>
       </Box>
-    </Box>
+    </ImageListItem>
   );
 };
 
