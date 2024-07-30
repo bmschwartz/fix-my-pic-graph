@@ -4,6 +4,8 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 import { FMPButton, FMPTypography } from '@/components';
+import { useContractService } from '@/hooks/useContractService';
+import { useWallet } from '@/hooks/useWallet';
 
 const NewRequestForm: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -11,6 +13,9 @@ const NewRequestForm: React.FC = () => {
   const [budget, setBudget] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  const { contractService } = useContractService();
+  const { selectedAccount: account, selectedWallet: wallet } = useWallet();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -26,6 +31,11 @@ const NewRequestForm: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!account || !wallet || !image) {
+      return;
+    }
+
+    contractService.createPictureRequest({ account, title, description, budget: parseFloat(budget), image });
   };
 
   return (
