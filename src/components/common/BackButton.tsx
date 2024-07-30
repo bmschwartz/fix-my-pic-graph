@@ -29,6 +29,7 @@ const BackButton: React.FC<BackButtonProps> = ({ href, sx }) => {
         <Typography
           sx={{
             fontWeight: 'bold',
+            fontSize: '1.1rem',
             position: 'relative',
             '& .underline': {
               content: '""',
