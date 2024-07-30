@@ -1,13 +1,14 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Box, Typography } from '@mui/material';
+import { Box, SxProps, Typography } from '@mui/material';
 import Link from 'next/link';
 import React from 'react';
 
 interface BackButtonProps {
   href: string;
+  sx?: SxProps;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ href }: BackButtonProps) => {
+const BackButton: React.FC<BackButtonProps> = ({ href, sx }) => {
   return (
     <Link href={href} passHref>
       <Box
@@ -21,6 +22,7 @@ const BackButton: React.FC<BackButtonProps> = ({ href }: BackButtonProps) => {
           '&:hover .underline': {
             width: '100%',
           },
+          ...sx,
         }}
       >
         <ArrowBackIcon sx={{ mr: 1 }} />

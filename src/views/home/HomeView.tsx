@@ -10,7 +10,7 @@ const HomeView: React.FC = () => {
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
-          mb: 6,
+          mb: 4,
         }}
       />
       <RequestList />

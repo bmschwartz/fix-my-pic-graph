@@ -5,8 +5,8 @@ import { BackButton, NewRequestForm } from '@/components';
 
 const NewRequestView: React.FC = () => {
   return (
-    <Box sx={{ padding: 2, margin: '32px' }}>
-      <BackButton href="/" />
+    <Box sx={{ my: 4 }}>
+      <BackButton href="/" sx={{ mb: 4 }} />
       <NewRequestForm />
     </Box>
   );
