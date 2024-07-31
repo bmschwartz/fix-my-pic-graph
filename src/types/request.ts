@@ -1,7 +1,7 @@
 import { RequestComment } from './comment';
 import { RequestSubmission } from './submission';
 
-export interface PictureRequest {
+export interface Request {
   id: string;
   title: string;
   budget: number;
@@ -11,4 +11,4 @@ export interface PictureRequest {
   submissions: RequestSubmission[];
 }
 
-export type PartialPictureRequest = Partial<PictureRequest>;
+export type PartialRequest = Partial<Request>;

@@ -1,11 +1,11 @@
 import { RequestComment } from '@/types/comment';
-import { PartialPictureRequest } from '@/types/pictureRequest';
 import { SubmissionPurchase } from '@/types/purchase';
+import { PartialRequest } from '@/types/request';
 import { RequestSubmission } from '@/types/submission';
 import { removeNullishValues } from './object';
 
 import type {
-  PictureRequest as GqlPictureRequest,
+  PictureRequest as GqlRequest,
   RequestComment as GqlRequestComment,
   RequestSubmission as GqlRequestSubmission,
   SubmissionPurchase as GqlSubmissionPurchase,
@@ -48,14 +48,17 @@ const mapRequestSubmission = (submission: GqlRequestSubmission): RequestSubmissi
   };
 };
 
-export const mapPictureRequest = (pictureRequest: GqlPictureRequest): PartialPictureRequest => {
+export const mapPictureRequest = (request: GqlRequest): PartialRequest => {
   return removeNullishValues({
-    id: pictureRequest.id,
-    title: pictureRequest.title,
-    budget: pictureRequest.budget,
-    imageId: pictureRequest.imageId,
-    description: pictureRequest.description,
-    comments: (pictureRequest.comments ?? []).map(mapRequestComment),
-    submissions: (pictureRequest.submissions ?? []).map(mapRequestSubmission),
+    id: request.id,
+    title: request.title,
+    budget: request.budget,
+    creator: request.creator,
+    imageId: request.imageId,
+    createdAt: request.createdAt,
+    expiresAt: request.expiresAt,
+    description: request.description,
+    comments: (request.comments ?? []).map(mapRequestComment),
+    submissions: (request.submissions ?? []).map(mapRequestSubmission),
   });
 };

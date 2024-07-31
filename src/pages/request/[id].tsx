@@ -1,12 +1,13 @@
+import { GetServerSideProps } from 'next';
 import React from 'react';
 
-import { execute, GetPictureRequestDocument } from '@/graphql/client';
-import { PictureRequest } from '@/types/pictureRequest';
+import { getBuiltGraphSDK } from '@/graphql/client';
+import { Request } from '@/types/request';
 import { getLogger } from '@/utils/logging';
 import RequestDetailView from '@/views/request/RequestDetailView';
 
 interface RequestDetailsPageProps {
-  request: PictureRequest | null;
+  request: Request | null;
   error?: string;
 }
 
@@ -24,14 +25,14 @@ const RequestDetailsPage: React.FC<RequestDetailsPageProps> = ({ request, error 
   return <RequestDetailView request={request} />;
 };
 
-export async function getServerSideProps(context: any) {
+const sdk = getBuiltGraphSDK();
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const { id } = context.params;
+    const { id } = context.params as { id: string };
 
-    const result = await execute(GetPictureRequestDocument, { id });
+    const result = await sdk.GetPictureRequest({ id });
 
-    if (!result?.data?.request) {
-      logger.error('Request not found', Object.keys(result?.data));
+    if (!result.pictureRequest) {
       return {
         props: {
           request: null,
@@ -42,7 +43,7 @@ export async function getServerSideProps(context: any) {
 
     return {
       props: {
-        request: result.data.request,
+        request: result.pictureRequest,
       },
     };
   } catch (error) {
@@ -54,6 +55,6 @@ export async function getServerSideProps(context: any) {
       },
     };
   }
-}
+};
 
 export default RequestDetailsPage;

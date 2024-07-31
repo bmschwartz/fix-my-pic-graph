@@ -3,7 +3,7 @@ import ImageList from '@mui/material/ImageList';
 import React from 'react';
 
 import { useRequests } from '@/hooks/useRequests';
-import { PictureRequest } from '@/types/pictureRequest';
+import { Request } from '@/types/request';
 import RequestListItem from './RequestListItem';
 
 const RequestList: React.FC = () => {
@@ -23,7 +23,7 @@ const RequestList: React.FC = () => {
 
   return (
     <ImageList variant="masonry" cols={getCols()} gap={24}>
-      {requests.map((request: PictureRequest) => (
+      {requests.map((request: Request) => (
         <RequestListItem key={request.id} pictureRequest={request} />
       ))}
     </ImageList>

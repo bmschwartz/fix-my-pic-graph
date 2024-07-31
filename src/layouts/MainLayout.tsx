@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
 
-import Header from '@/components/common/Header';
+import { Header } from '@/components';
 
 interface MainLayoutProps {
   children: React.ReactNode;

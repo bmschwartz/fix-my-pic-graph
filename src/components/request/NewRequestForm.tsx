@@ -48,7 +48,7 @@ const NewRequestForm: React.FC = () => {
       const imageId = await uploadImage({ file: image });
 
       setLoadingLabel('Creating smart contract...');
-      const requestId = await contractService.createPictureRequest({
+      await contractService.createPictureRequest({
         account,
         title,
         description,
@@ -56,7 +56,7 @@ const NewRequestForm: React.FC = () => {
         imageId,
         wallet,
       });
-      requestId ? router.push(`/request/${requestId}`) : router.push('/');
+      router.push('/');
       return;
     } catch (e) {
       console.error(e);

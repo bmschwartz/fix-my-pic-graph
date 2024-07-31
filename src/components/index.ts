@@ -11,3 +11,8 @@ export { default as RequestList } from './request/RequestList';
 export { default as NewRequestForm } from './request/NewRequestForm';
 export { default as RequestListItem } from './request/RequestListItem';
 export { default as CreateRequestButton } from './request/CreateRequestButton';
+export { default as RequestDetailTabSection } from './request/RequestDetailTabSection';
+export { default as RequestDetailInfoSection } from './request/RequestDetailInfoSection';
+
+export { default as NewSubmissionForm } from './submission/NewSubmissionForm';
+export { default as SubmissionListItem } from './submission/SubmissionListItem';
