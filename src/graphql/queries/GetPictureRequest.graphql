@@ -4,5 +4,4 @@ query GetPictureRequest($id: ID!) {
   pictureRequest(id: $id) {
     ...PictureRequestFragment
   }
-  
 }
