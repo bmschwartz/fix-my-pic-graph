@@ -1,9 +1,10 @@
 import { GetServerSideProps } from 'next';
 import React from 'react';
 
-import { getBuiltGraphSDK } from '@/graphql/client';
+import { getBuiltGraphSDK, PictureRequest as GqlPictureRequest } from '@/graphql/client';
 import { Request } from '@/types/request';
 import { getLogger } from '@/utils/logging';
+import { mapPictureRequest } from '@/utils/mappers';
 import RequestDetailView from '@/views/request/RequestDetailView';
 
 interface RequestDetailsPageProps {
@@ -43,7 +44,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
       props: {
-        request: result.pictureRequest,
+        request: mapPictureRequest(result.pictureRequest as GqlPictureRequest),
       },
     };
   } catch (error) {

@@ -76,7 +76,7 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
         title,
         description,
         imageId,
-        budget,
+        budget * 100, // convert to cents
         expiresAt || 1722865505
       );
       const receipt: ContractTransactionReceipt = await tx.wait();

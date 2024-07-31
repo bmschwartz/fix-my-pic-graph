@@ -52,7 +52,7 @@ export const mapPictureRequest = (request: GqlRequest): PartialRequest => {
   return removeNullishValues({
     id: request.id,
     title: request.title,
-    budget: request.budget,
+    budget: request.budget / 100, // Convert from cents to dollars
     creator: request.creator,
     imageId: request.imageId,
     createdAt: request.createdAt,

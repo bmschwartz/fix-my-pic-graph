@@ -10,7 +10,7 @@ const NewSubmissionView: React.FC = () => {
 
   return (
     <Box sx={{ my: 4 }}>
-      <BackButton href="/" sx={{ mb: 4 }} />
+      <BackButton href={`/request/${requestId}`} sx={{ mb: 4 }} />
       <NewSubmissionForm requestId={requestId} />
     </Box>
   );
