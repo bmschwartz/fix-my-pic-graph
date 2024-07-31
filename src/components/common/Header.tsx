@@ -1,4 +1,5 @@
 import { AppBar, Avatar, Toolbar, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
 
 import ConnectWalletDialog from '@/components/wallet/ConnectWalletDialog';
@@ -6,6 +7,7 @@ import { useWallet } from '@/hooks/useWallet';
 import FMPButton from './FMPButton';
 
 const Header: React.FC = () => {
+  const theme = useTheme();
   const { selectedWallet, selectedAccount, disconnectWallet } = useWallet();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -19,11 +21,9 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: '#FFFFFF', padding: '15px' }}>
-        {' '}
+      <AppBar position="static" sx={{ backgroundColor: theme.palette.background.default, padding: '15px' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1, color: '#000000' }}>
-            {' '}
             Fix My Pic
           </Typography>
           {selectedWallet && selectedAccount ? (

@@ -1,7 +1,8 @@
 #import { PictureRequestFragment } from '../fragments/PictureRequestFragment.graphql'
 
-query GetPictureRequests {
-  pictureRequests {
+query GetPictureRequest($id: ID!) {
+  pictureRequest(id: $id) {
     ...PictureRequestFragment
   }
+  
 }

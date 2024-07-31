@@ -1,0 +1,18 @@
+#import { CommentFragment } from './CommentFragment.graphql'
+#import { SubmissionFragment } from './SubmissionFragment.graphql'
+
+fragment PictureRequestFragment on PictureRequest {
+  id
+  title
+  description
+  imageId
+  budget
+  creator
+  createdAt
+  comments {
+    ...CommentFragment
+  }
+  submissions {
+    ...SubmissionFragment
+  }
+}

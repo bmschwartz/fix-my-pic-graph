@@ -78,6 +78,9 @@ const NewRequestForm: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Box
             sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
               bgcolor: 'background.paper',
               padding: 3,
               borderRadius: 2,
@@ -193,10 +196,10 @@ const NewRequestForm: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
+              height: '100%',
               border: '1px dashed #ccc',
               borderRadius: 2,
               padding: 2,
-              minHeight: '350px',
               bgcolor: 'background.paper',
             }}
           >

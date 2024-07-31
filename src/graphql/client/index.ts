@@ -1337,7 +1337,8 @@ const merger = new(BareMerger as any)({
         store: rootStore.child('bareMerger')
       })
 const documentHashMap = {
-        "f9207af0e9c6b14053eab8232a6425ea2a844594cf5b8b2f4a1f1a8445746ae8": GetPictureRequestsDocument
+        "7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": GetPictureRequestDocument,
+"8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": GetPictureRequestsDocument
       }
 additionalEnvelopPlugins.push(usePersistedOperations({
         getPersistedOperation(key) {
@@ -1359,12 +1360,19 @@ additionalEnvelopPlugins.push(usePersistedOperations({
     get documents() {
       return [
       {
+        document: GetPictureRequestDocument,
+        get rawSDL() {
+          return printWithCache(GetPictureRequestDocument);
+        },
+        location: 'GetPictureRequestDocument.graphql',
+        sha256Hash: '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac'
+      },{
         document: GetPictureRequestsDocument,
         get rawSDL() {
           return printWithCache(GetPictureRequestsDocument);
         },
         location: 'GetPictureRequestsDocument.graphql',
-        sha256Hash: 'f9207af0e9c6b14053eab8232a6425ea2a844594cf5b8b2f4a1f1a8445746ae8'
+        sha256Hash: '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108'
       }
     ];
     },
@@ -1421,7 +1429,22 @@ export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(
 }
 export type CommentFragmentFragment = Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>;
 
+export type PictureRequestFragmentFragment = (
+  Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
+  & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>> }
+);
+
 export type SubmissionFragmentFragment = Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>;
+
+export type GetPictureRequestQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetPictureRequestQuery = { pictureRequest?: Maybe<(
+    Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
+    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>> }
+  )> };
 
 export type GetPictureRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1451,31 +1474,47 @@ export const SubmissionFragmentFragmentDoc = gql`
   encryptedImageId
 }
     ` as unknown as DocumentNode<SubmissionFragmentFragment, unknown>;
-export const GetPictureRequestsDocument = gql`
-    query GetPictureRequests {
-  pictureRequests {
-    id
-    title
-    description
-    imageId
-    budget
-    creator
-    createdAt
-    comments {
-      ...CommentFragment
-    }
-    submissions {
-      ...SubmissionFragment
-    }
+export const PictureRequestFragmentFragmentDoc = gql`
+    fragment PictureRequestFragment on PictureRequest {
+  id
+  title
+  description
+  imageId
+  budget
+  creator
+  createdAt
+  comments {
+    ...CommentFragment
+  }
+  submissions {
+    ...SubmissionFragment
   }
 }
     ${CommentFragmentFragmentDoc}
-${SubmissionFragmentFragmentDoc}` as unknown as DocumentNode<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>;
+${SubmissionFragmentFragmentDoc}` as unknown as DocumentNode<PictureRequestFragmentFragment, unknown>;
+export const GetPictureRequestDocument = gql`
+    query GetPictureRequest($id: ID!) {
+  pictureRequest(id: $id) {
+    ...PictureRequestFragment
+  }
+}
+    ${PictureRequestFragmentFragmentDoc}` as unknown as DocumentNode<GetPictureRequestQuery, GetPictureRequestQueryVariables>;
+export const GetPictureRequestsDocument = gql`
+    query GetPictureRequests {
+  pictureRequests {
+    ...PictureRequestFragment
+  }
+}
+    ${PictureRequestFragmentFragmentDoc}` as unknown as DocumentNode<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>;
+
 
 
 export type Requester<C = {}, E = unknown> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
 export function getSdk<C, E>(requester: Requester<C, E>) {
   return {
+    GetPictureRequest(variables: GetPictureRequestQueryVariables, options?: C): Promise<GetPictureRequestQuery> {
+      return requester<GetPictureRequestQuery, GetPictureRequestQueryVariables>(GetPictureRequestDocument, variables, options) as Promise<GetPictureRequestQuery>;
+    },
     GetPictureRequests(variables?: GetPictureRequestsQueryVariables, options?: C): Promise<GetPictureRequestsQuery> {
       return requester<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>(GetPictureRequestsDocument, variables, options) as Promise<GetPictureRequestsQuery>;
     }
