@@ -4,7 +4,6 @@ import { BrowserProvider, Contract, Signer } from 'zksync-ethers';
 import FixMyPicFactorySchema from '@/public/artifacts/FixMyPicFactory.json';
 import RequestSubmissionSchema from '@/public/artifacts/RequestSubmission.json';
 import { EIP6963ProviderDetail } from '@/types/eip6963';
-import { convertUsdToEthWithoutRate } from '@/utils/currency';
 
 interface WalletParams {
   account: string;
@@ -72,15 +71,12 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
   }: CreatePictureRequestParams): Promise<string | null> => {
     const fixMyPicFactory = new Contract(factoryAddress, FixMyPicFactorySchema.abi, await _getSigner(wallet, account));
 
-    const budgetEth = await convertUsdToEthWithoutRate(budget);
-    const budgetInWei = ethers.parseEther(budgetEth);
-
     try {
       const tx = await fixMyPicFactory.createPictureRequest(
         title,
         description,
         imageId,
-        budgetInWei,
+        budget,
         expiresAt || 1722865505
       );
       const receipt: ContractTransactionReceipt = await tx.wait();
@@ -130,13 +126,10 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
         await _getSigner(wallet, account)
       );
 
-      const priceEth = await convertUsdToEthWithoutRate(price);
-      const priceInWei = ethers.parseEther(priceEth);
-
       const tx = await fixMyPicFactory.createSubmission(
         requestAddress,
         description,
-        priceInWei,
+        price,
         freePictureId || '',
         watermarkedPictureId || '',
         encryptedPictureId || ''
