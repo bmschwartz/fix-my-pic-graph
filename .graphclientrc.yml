@@ -5,10 +5,4 @@ sources:
         endpoint: http://localhost:8000/subgraphs/name/fixmypic-graph
 
 documents:
-  - ./src/graphql/queries/GetPictureRequests.graphql
-  - ./src/graphql/queries/GetPictureRequest.graphql
-  
-  - ./src/graphql/fragments/CommentFragment.graphql
-  - ./src/graphql/fragments/SubmissionFragment.graphql
-  - ./src/graphql/fragments/PictureRequestFragment.graphql
-  # - './src/graphql/**/*.graphql'
+  - ./src/graphql/**/*.graphql
