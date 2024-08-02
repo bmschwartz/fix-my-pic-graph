@@ -1,34 +1,45 @@
-import { Badge, Button } from '@mui/material';
+import { Badge, Box, ButtonProps } from '@mui/material';
 import React from 'react';
 
-interface TabButtonProps {
+import FMPButton from './FMPButton';
+
+interface TabButtonProps extends ButtonProps {
   text: string;
-  selected: boolean;
-  onClick: () => void;
   badgeContent?: string;
+  selected: boolean;
 }
 
-const TabButton: React.FC<TabButtonProps> = ({ text, selected, onClick, badgeContent }) => {
+const TabButton: React.FC<TabButtonProps> = ({ text, badgeContent, selected, sx, ...props }) => {
   return (
-    <Button
-      variant={selected ? 'contained' : 'outlined'}
-      color={selected ? 'primary' : 'inherit'}
-      onClick={onClick}
-      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minWidth: 150 }}
+    <FMPButton
+      {...props}
+      sx={{
+        backgroundColor: selected ? '#000000' : '#FFFFFF',
+        color: selected ? '#FFFFFF' : '#000000',
+        '&:hover': {
+          backgroundColor: selected ? '#333333' : '#f0f0f0',
+        },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '8px 16px',
+        ...sx,
+      }}
     >
-      {text}
-      {badgeContent && (
-        <Badge
-          badgeContent={badgeContent}
-          color="secondary"
-          sx={{ ml: 1 }}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        />
-      )}
-    </Button>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        {text}
+        {badgeContent && (
+          <Badge
+            badgeContent={badgeContent}
+            color="secondary"
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          />
+        )}
+      </Box>
+    </FMPButton>
   );
 };
 

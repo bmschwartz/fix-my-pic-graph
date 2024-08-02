@@ -4,20 +4,22 @@ import React from 'react';
 
 import { FMPButton } from '@/components';
 
-interface CreateRequestButtonProps {
+interface LinkButtonProps {
   sx?: SxProps;
+  href: string;
+  text: string;
 }
 
-const CreateRequestButton: React.FC<CreateRequestButtonProps> = ({ sx }) => {
+const LinkButton: React.FC<LinkButtonProps> = ({ sx, href, text }) => {
   return (
     <Box sx={sx}>
-      <Link href="/request/new" passHref>
+      <Link href={href} passHref>
         <FMPButton type="button" variant="contained" color="primary">
-          Create Request
+          {text}
         </FMPButton>
       </Link>
     </Box>
   );
 };
 
-export default CreateRequestButton;
+export default LinkButton;

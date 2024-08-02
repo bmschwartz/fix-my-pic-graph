@@ -1,12 +1,14 @@
 import { Box } from '@mui/material';
 import React from 'react';
 
-import { CreateRequestButton, RequestList } from '@/components';
+import { LinkButton, RequestList } from '@/components';
 
 const HomeView: React.FC = () => {
   return (
     <Box sx={{ padding: 2 }}>
-      <CreateRequestButton
+      <LinkButton
+        text="Create Request"
+        href="/request/new"
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
