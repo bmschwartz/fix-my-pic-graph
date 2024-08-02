@@ -1,7 +1,9 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Box, SxProps, Typography } from '@mui/material';
+import { Box, SxProps } from '@mui/material';
 import Link from 'next/link';
 import React from 'react';
+
+import FMPTypography from './FMPTypography';
 
 interface BackButtonProps {
   href: string;
@@ -26,7 +28,7 @@ const BackButton: React.FC<BackButtonProps> = ({ href, sx }) => {
         }}
       >
         <ArrowBackIcon sx={{ mr: 1 }} />
-        <Typography
+        <FMPTypography
           sx={{
             fontWeight: 'bold',
             fontSize: '1.1rem',
@@ -45,7 +47,7 @@ const BackButton: React.FC<BackButtonProps> = ({ href, sx }) => {
         >
           Back
           <Box className="underline" sx={{ width: '0%' }} />
-        </Typography>
+        </FMPTypography>
       </Box>
     </Link>
   );

@@ -126,7 +126,7 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
         await _getSigner(wallet, account)
       );
 
-      const tx = await fixMyPicFactory.createSubmission(
+      const tx = await fixMyPicFactory.createRequestSubmission(
         requestAddress,
         description,
         price,

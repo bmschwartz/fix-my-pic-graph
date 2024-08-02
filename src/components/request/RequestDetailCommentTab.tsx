@@ -1,6 +1,7 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 
 import { Request } from '@/types/request';
+import FMPButton from '../common/FMPButton';
 
 interface RequestDetailCommentTabProps {
   request: Request;
@@ -18,9 +19,9 @@ const RequestDetailCommentTab: React.FC<RequestDetailCommentTabProps> = ({ reque
         </Box>
       ))}
       <TextField fullWidth multiline rows={4} variant="outlined" placeholder="Add a comment" sx={{ mb: 2 }} />
-      <Button variant="contained" color="primary">
+      <FMPButton variant="contained" color="primary">
         Submit
-      </Button>
+      </FMPButton>
     </Box>
   );
 };
