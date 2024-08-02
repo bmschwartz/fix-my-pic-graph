@@ -1,4 +1,5 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Description, MonetizationOn } from '@mui/icons-material';
+import { Box, Divider, Paper, Typography } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
@@ -11,36 +12,62 @@ interface RequestDetailInfoSectionProps {
 
 const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ request }) => {
   return (
-    <Paper sx={{ p: 0, mb: 3, position: 'relative', overflow: 'hidden' }}>
-      <Box sx={{ position: 'relative', width: '100%', height: '300px' }}>
-        <Image
-          src={getImageUrl(request.imageId)}
-          alt={request.title}
-          layout="fill"
-          objectFit="cover"
-          style={{ opacity: 0.5 }}
-        />
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 3 }}>
+      <Paper
+        sx={{
+          flex: { xs: '1 1 100%', md: '1 1 50%' },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 400,
+          padding: 2,
+        }}
+      >
         <Box
           sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            p: 2,
-            bgcolor: 'rgba(0, 0, 0, 0.5)',
-            color: '#fff',
+            width: '100%',
+            height: '100%',
+            position: 'relative',
+            minHeight: 300,
           }}
         >
-          <Typography variant="h4" gutterBottom>
-            {request.title}
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            {request.description}
-          </Typography>
-          <Typography variant="h6">${request.budget}</Typography>
+          <Image
+            src={getImageUrl(request.imageId)}
+            alt={request.title}
+            layout="fill"
+            objectFit="cover"
+            style={{ borderRadius: '8px' }}
+          />
         </Box>
-      </Box>
-    </Paper>
+      </Paper>
+      <Paper
+        sx={{
+          flex: { xs: '1 1 100%', md: '1 1 50%' },
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          padding: 3,
+          textAlign: 'left',
+          bgcolor: '#f9f9f9',
+          borderRadius: '8px',
+          boxShadow: 2,
+        }}
+      >
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+          {request.title}
+        </Typography>
+        <Divider sx={{ width: '100%', mb: 2 }} />
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Description sx={{ mr: 1, color: 'primary.main' }} />
+          <Typography variant="body1">{request.description}</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <MonetizationOn sx={{ mr: 1, color: 'primary.main' }} />
+          <Typography variant="body1">${request.budget}</Typography>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 

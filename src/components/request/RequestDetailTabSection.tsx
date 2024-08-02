@@ -1,4 +1,4 @@
-import { Box, Paper } from '@mui/material';
+import { Box, Divider, Paper } from '@mui/material';
 import React, { useState } from 'react';
 
 import { Request } from '@/types/request';
@@ -24,7 +24,7 @@ const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ reque
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 3 }}>
         <TabButton
           text="Submissions"
           selected={selectedTab === RequestDetailTab.Submissions}
@@ -38,6 +38,7 @@ const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ reque
           badgeContent={String(request.comments.length)}
         />
       </Box>
+      <Divider sx={{ my: 3 }} />
       {selectedTab === RequestDetailTab.Submissions && <RequestDetailSubmissionSection request={request} />}
       {selectedTab === RequestDetailTab.Comments && <RequestDetailCommentSection request={request} />}
     </Paper>
