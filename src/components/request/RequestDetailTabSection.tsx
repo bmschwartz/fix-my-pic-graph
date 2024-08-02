@@ -1,54 +1,45 @@
-import { Paper, Tab, Tabs } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import React, { useState } from 'react';
 
 import { Request } from '@/types/request';
-import RequestDetailCommentTab from './RequestDetailCommentTab';
-import RequestDetailSubmissionTab from './RequestDetailSubmissionTab';
+import TabButton from '../common/TabButton';
+import RequestDetailCommentSection from './RequestDetailCommentTab';
+import RequestDetailSubmissionSection from './RequestDetailSubmissionTab';
 
 interface RequestDetailTabSectionProps {
   request: Request;
 }
 
-const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ request }) => {
-  const [tabIndex, setTabIndex] = useState(0);
+enum RequestDetailTab {
+  Submissions = 'submissions',
+  Comments = 'comments',
+}
 
-  const handleTabChange = (event: React.SyntheticEvent, newIndex: number) => {
-    setTabIndex(newIndex);
+const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ request }) => {
+  const [selectedTab, setSelectedTab] = useState<RequestDetailTab>(RequestDetailTab.Submissions);
+
+  const handleTabChange = (tab: RequestDetailTab) => {
+    setSelectedTab(tab);
   };
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Tabs
-        value={tabIndex}
-        onChange={handleTabChange}
-        variant="fullWidth"
-        TabIndicatorProps={{
-          style: {
-            backgroundColor: '#000', // Black underline for the selected tab
-          },
-        }}
-      >
-        <Tab
-          label="Submissions"
-          sx={{
-            color: tabIndex === 0 ? '#000' : '#999',
-            backgroundColor: tabIndex === 0 ? '#fff' : '#f0f0f0',
-            fontWeight: tabIndex === 0 ? 'bold' : 'normal',
-            borderBottom: '2px solid #000',
-          }}
+      <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+        <TabButton
+          text="Submissions"
+          selected={selectedTab === RequestDetailTab.Submissions}
+          onClick={() => handleTabChange(RequestDetailTab.Submissions)}
+          badgeContent={String(request.submissions.length)}
         />
-        <Tab
-          label="Comments"
-          sx={{
-            color: tabIndex === 1 ? '#000' : '#999',
-            backgroundColor: tabIndex === 1 ? '#fff' : '#f0f0f0',
-            fontWeight: tabIndex === 1 ? 'bold' : 'normal',
-            borderBottom: '2px solid #000',
-          }}
+        <TabButton
+          text="Comments"
+          selected={selectedTab === RequestDetailTab.Comments}
+          onClick={() => handleTabChange(RequestDetailTab.Comments)}
+          badgeContent={String(request.comments.length)}
         />
-      </Tabs>
-      {tabIndex === 0 && <RequestDetailSubmissionTab request={request} />}
-      {tabIndex === 1 && <RequestDetailCommentTab request={request} />}
+      </Box>
+      {selectedTab === RequestDetailTab.Submissions && <RequestDetailSubmissionSection request={request} />}
+      {selectedTab === RequestDetailTab.Comments && <RequestDetailCommentSection request={request} />}
     </Paper>
   );
 };
