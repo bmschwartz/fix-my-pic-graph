@@ -1,4 +1,4 @@
-import { Box, Divider, Paper } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import React, { useState } from 'react';
 
 import { Request } from '@/types/request';
@@ -23,7 +23,7 @@ const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ reque
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
+    <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 3 }}>
         <TabButton
           text="Submissions"
@@ -41,7 +41,7 @@ const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ reque
       <Divider sx={{ my: 3 }} />
       {selectedTab === RequestDetailTab.Submissions && <RequestDetailSubmissionSection request={request} />}
       {selectedTab === RequestDetailTab.Comments && <RequestDetailCommentSection request={request} />}
-    </Paper>
+    </Box>
   );
 };
 

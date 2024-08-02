@@ -31,7 +31,7 @@ const TabButton: React.FC<TabButtonProps> = ({ text, badgeContent, selected, sx,
         {badgeContent && (
           <Badge
             badgeContent={badgeContent}
-            color="secondary"
+            color="info"
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right',

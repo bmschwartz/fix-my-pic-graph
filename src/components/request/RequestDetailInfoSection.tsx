@@ -1,5 +1,5 @@
 import { Description, MonetizationOn } from '@mui/icons-material';
-import { Box, Divider, Paper, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
@@ -25,7 +25,7 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, mb: 3 }}>
-        <Paper
+        <Box
           sx={{
             flex: { xs: '1 1 100%', md: '1 1 50%' },
             display: 'flex',
@@ -33,6 +33,8 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
             justifyContent: 'center',
             height: 400,
             padding: 2,
+            overflow: 'hidden',
+            cursor: 'pointer',
           }}
           onClick={handleImageClick}
         >
@@ -42,19 +44,12 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
               height: '100%',
               position: 'relative',
               minHeight: 300,
-              cursor: 'pointer',
             }}
           >
-            <Image
-              src={getImageUrl(request.imageId)}
-              alt={request.title}
-              layout="fill"
-              objectFit="cover"
-              style={{ borderRadius: '8px' }}
-            />
+            <Image src={getImageUrl(request.imageId)} alt={request.title} layout="fill" objectFit="cover" />
           </Box>
-        </Paper>
-        <Paper
+        </Box>
+        <Box
           sx={{
             flex: { xs: '1 1 100%', md: '1 1 50%' },
             display: 'flex',
@@ -63,9 +58,6 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
             alignItems: 'flex-start',
             padding: 3,
             textAlign: 'left',
-            bgcolor: '#f9f9f9',
-            borderRadius: '8px',
-            boxShadow: 2,
           }}
         >
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
@@ -80,7 +72,7 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
             <MonetizationOn sx={{ mr: 1, color: 'primary.main' }} />
             <Typography variant="body1">${request.budget}</Typography>
           </Box>
-        </Paper>
+        </Box>
       </Box>
       {isOverlayOpen && <ImageOverlay imageUrl={getImageUrl(request.imageId)} onClose={handleOverlayClose} />}
     </>

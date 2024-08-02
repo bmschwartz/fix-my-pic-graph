@@ -11,6 +11,9 @@ const theme = createTheme({
     secondary: {
       main: '#ffffff', // Optional: Set secondary color to white or any other color
     },
+    info: {
+      main: '#e7e7e7', // Optional: Set info color to black or any other color
+    },
   },
 });
 
