@@ -1,9 +1,8 @@
 import { Box, Grid, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Request } from '@/types/request';
 import LinkButton from '../common/LinkButton';
-import SubmissionGallery from '../submission/SubmissionGallery';
 import SubmissionListItem from '../submission/SubmissionListItem';
 
 interface RequestDetailSubmissionTabProps {
@@ -24,44 +23,21 @@ const EmptyState: React.FC = () => {
 };
 
 const RequestDetailSubmissionTab: React.FC<RequestDetailSubmissionTabProps> = ({ request }) => {
-  const [selectedSubmissionIndex, setSelectedSubmissionIndex] = useState<number | null>(null);
-
-  const handleSubmissionClick = (index: number) => {
-    setSelectedSubmissionIndex(index);
-  };
-
-  const handleCloseGallery = () => {
-    setSelectedSubmissionIndex(null);
-  };
-
   return (
     <Box sx={{ mt: 3, position: 'relative' }}>
-      <Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+      <Box sx={{ textAlign: 'right', mb: 3 }}>
         <LinkButton text="New Submission" href={`/submission/new?request=${request.id}`} />
       </Box>
       {request.submissions.length === 0 ? (
         <EmptyState />
       ) : (
-        <Grid container spacing={2} sx={{ mt: 5 }}>
-          {request.submissions.map((submission, index) => (
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          {request.submissions.map((submission) => (
             <Grid item xs={12} sm={6} md={4} key={submission.id}>
-              <SubmissionListItem submission={submission} onClick={() => handleSubmissionClick(index)} />
+              <SubmissionListItem submission={submission} />
             </Grid>
           ))}
         </Grid>
-      )}
-      {selectedSubmissionIndex !== null && (
-        <SubmissionGallery
-          submissions={request.submissions}
-          currentIndex={selectedSubmissionIndex}
-          onClose={handleCloseGallery}
-          onNext={() => setSelectedSubmissionIndex((selectedSubmissionIndex + 1) % request.submissions.length)}
-          onPrev={() =>
-            setSelectedSubmissionIndex(
-              (selectedSubmissionIndex - 1 + request.submissions.length) % request.submissions.length
-            )
-          }
-        />
       )}
     </Box>
   );

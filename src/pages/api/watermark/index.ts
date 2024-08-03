@@ -51,8 +51,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const watermarkFileBuffer = await fsPromises.readFile('public/watermark.png');
 
     const watermarkedImage = await addImageWatermark(imageFileBuffer, watermarkFileBuffer, {
-      ratio: 1,
       dpi: 600,
+      ratio: 1,
+      opacity: 0.5,
     });
 
     const watermarkBuffer: Buffer = await watermarkedImage.toBuffer();

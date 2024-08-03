@@ -1,11 +1,9 @@
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Dialog, IconButton, Typography } from '@mui/material';
+import { Box, Dialog, IconButton } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import { FMPButton } from '@/components';
+import { FMPButton, FMPTypography } from '@/components';
 import { useImageStore } from '@/hooks/useImageStore';
 import { RequestSubmission } from '@/types/submission';
 
@@ -25,8 +23,6 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
   onPrev,
 }) => {
   const { getFreeImageUrl } = useImageStore();
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-
   const submission = submissions[currentIndex];
   const imageUrl = getFreeImageUrl(submission);
   const isFree = submission.price === 0;
@@ -45,11 +41,24 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
     }
   };
 
-  const handleLoadingComplete = ({ naturalWidth, naturalHeight }: { naturalWidth: number; naturalHeight: number }) => {
-    setImageDimensions({ width: naturalWidth, height: naturalHeight });
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowRight') {
+      onNext();
+    } else if (event.key === 'ArrowLeft') {
+      onPrev();
+    } else if (event.key === 'Escape') {
+      onClose();
+    }
   };
 
-  const { width, height } = imageDimensions;
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const imageRef = useRef<HTMLImageElement>(null);
 
   return (
     <Dialog
@@ -88,33 +97,22 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
           sx={{
             position: 'absolute',
             left: 16,
+            top: '50%',
+            transform: 'translateY(-50%)',
             color: 'white',
             zIndex: 10,
-            fontSize: '48px', // Increase size
+            fontSize: 40,
           }}
         >
-          <ChevronLeftIcon fontSize="inherit" />
-        </IconButton>
-        <IconButton
-          onClick={onNext}
-          sx={{
-            position: 'absolute',
-            right: 16,
-            color: 'white',
-            zIndex: 10,
-            fontSize: '48px', // Increase size
-          }}
-        >
-          <ChevronRightIcon fontSize="inherit" />
+          {'<'}
         </IconButton>
         <Box
           sx={{
             position: 'relative',
             width: { xs: '90%', sm: '80%', md: '60%' },
             height: 'auto',
-            maxHeight: '80%',
             zIndex: 20,
-            bgcolor: 'background.default', // Match the background color of the website
+            bgcolor: 'background.paper',
             borderRadius: '8px',
             overflow: 'hidden',
             display: 'flex',
@@ -123,27 +121,40 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
         >
           <Box
             sx={{
+              flex: '1 1 auto',
               position: 'relative',
               width: '100%',
-              paddingBottom: `${(height / width) * 100}%`,
-              height: 0,
+              height: '100%',
             }}
           >
-            <Image
-              src={imageUrl}
-              alt="Overlay Image"
-              layout="fill"
-              objectFit="contain"
-              onLoadingComplete={handleLoadingComplete}
-            />
+            <Image src={imageUrl} alt="Overlay Image" layout="fill" objectFit="contain" ref={imageRef} />
           </Box>
           <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            <FMPTypography variant="h6" sx={{ fontWeight: 600 }}>
               {submission.description}
-            </Typography>
-            <FMPButton onClick={isFree ? handleDownload : handleBuy} sx={{ mt: 2 }}>
+            </FMPTypography>
+            <FMPButton variant="contained" color="primary" onClick={isFree ? handleDownload : handleBuy} sx={{ mt: 2 }}>
               {isFree ? 'Download' : `Buy for $${submission.price}`}
             </FMPButton>
+            <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+              <IconButton onClick={onPrev} sx={{ color: 'white', fontSize: 40 }}>
+                {'<'}
+              </IconButton>
+              <IconButton
+                onClick={onNext}
+                sx={{
+                  position: 'absolute',
+                  right: 16,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'white',
+                  zIndex: 10,
+                  fontSize: 40,
+                }}
+              >
+                {'>'}
+              </IconButton>
+            </Box>
           </Box>
         </Box>
       </Box>

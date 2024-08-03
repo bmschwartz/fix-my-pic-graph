@@ -1,18 +1,27 @@
 import { Box } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { RequestSubmission } from '@/types/submission';
 import { getImageUrl } from '@/utils/getImage';
 import FMPTypography from '../common/FMPTypography';
+import ImageOverlay from '../common/ImageOverlay';
 
 interface SubmissionListItemProps {
   submission: RequestSubmission;
-  onClick: () => void;
 }
 
-const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, onClick }) => {
+const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) => {
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const isFree = submission.price === 0;
+
+  const handleImageClick = () => {
+    setIsOverlayOpen(true);
+  };
+
+  const handleOverlayClose = () => {
+    setIsOverlayOpen(false);
+  };
 
   return (
     <>
@@ -24,13 +33,10 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, onC
           width={150}
           height={150}
           objectFit="cover"
-          onClick={onClick}
+          onClick={handleImageClick}
         />
       </Box>
       <Box sx={{ padding: 0 }}>
-        <FMPTypography variant="h6" sx={{ fontWeight: 600 }}>
-          {submission.description}
-        </FMPTypography>
         <FMPTypography variant="body1">{!isFree ? `$${submission.price}` : 'Free'}</FMPTypography>
         {!isFree && (
           <FMPTypography variant="body1">
@@ -38,6 +44,14 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, onC
           </FMPTypography>
         )}
       </Box>
+      {isOverlayOpen && (
+        <ImageOverlay
+          imageUrl={getImageUrl(submission.watermarkedPictureId || submission.freePictureId!)}
+          onClose={handleOverlayClose}
+          description={submission.description}
+          price={submission.price}
+        />
+      )}
     </>
   );
 };
