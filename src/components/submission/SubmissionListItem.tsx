@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 
@@ -14,14 +14,6 @@ interface SubmissionListItemProps {
 const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, onClick }) => {
   const isFree = submission.price === 0;
 
-  const handleDownload = () => {
-    // Handle download logic here
-  };
-
-  const handleBuy = () => {
-    // Handle buy logic here
-  };
-
   return (
     <>
       <Box sx={{ cursor: 'pointer' }}>
@@ -35,7 +27,7 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, onC
           onClick={onClick}
         />
       </Box>
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ padding: 0 }}>
         <FMPTypography variant="h6" sx={{ fontWeight: 600 }}>
           {submission.description}
         </FMPTypography>
@@ -45,9 +37,6 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, onC
             {submission.purchases.length} purchase{submission.purchases.length !== 1 && 's'}
           </FMPTypography>
         )}
-        <Button variant="contained" color="primary" onClick={isFree ? handleDownload : handleBuy} sx={{ mt: 2 }}>
-          {isFree ? 'Download' : 'Buy'}
-        </Button>
       </Box>
     </>
   );

@@ -1,9 +1,12 @@
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Button, Dialog, IconButton, Typography } from '@mui/material';
+import { Box, Dialog, IconButton, Typography } from '@mui/material';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
-import { getImageUrl } from '@/hooks/useImage';
+import { FMPButton } from '@/components';
+import { useImageStore } from '@/hooks/useImageStore';
 import { RequestSubmission } from '@/types/submission';
 
 interface SubmissionGalleryProps {
@@ -21,8 +24,11 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
   onNext,
   onPrev,
 }) => {
+  const { getFreeImageUrl } = useImageStore();
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+
   const submission = submissions[currentIndex];
-  const imageUrl = getImageUrl(submission.watermarkedPictureId || submission.freePictureId!);
+  const imageUrl = getFreeImageUrl(submission);
   const isFree = submission.price === 0;
 
   const handleDownload = () => {
@@ -38,6 +44,12 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
       onClose();
     }
   };
+
+  const handleLoadingComplete = ({ naturalWidth, naturalHeight }: { naturalWidth: number; naturalHeight: number }) => {
+    setImageDimensions({ width: naturalWidth, height: naturalHeight });
+  };
+
+  const { width, height } = imageDimensions;
 
   return (
     <Dialog
@@ -71,13 +83,38 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
         >
           <CloseIcon />
         </IconButton>
+        <IconButton
+          onClick={onPrev}
+          sx={{
+            position: 'absolute',
+            left: 16,
+            color: 'white',
+            zIndex: 10,
+            fontSize: '48px', // Increase size
+          }}
+        >
+          <ChevronLeftIcon fontSize="inherit" />
+        </IconButton>
+        <IconButton
+          onClick={onNext}
+          sx={{
+            position: 'absolute',
+            right: 16,
+            color: 'white',
+            zIndex: 10,
+            fontSize: '48px', // Increase size
+          }}
+        >
+          <ChevronRightIcon fontSize="inherit" />
+        </IconButton>
         <Box
           sx={{
             position: 'relative',
             width: { xs: '90%', sm: '80%', md: '60%' },
-            height: { xs: '90%', sm: '80%', md: '60%' },
+            height: 'auto',
+            maxHeight: '80%',
             zIndex: 20,
-            bgcolor: 'background.paper',
+            bgcolor: 'background.default', // Match the background color of the website
             borderRadius: '8px',
             overflow: 'hidden',
             display: 'flex',
@@ -86,32 +123,27 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
         >
           <Box
             sx={{
-              flex: '1 1 auto',
               position: 'relative',
               width: '100%',
-              height: '100%',
+              paddingBottom: `${(height / width) * 100}%`,
+              height: 0,
             }}
           >
-            <Image src={imageUrl} alt="Overlay Image" layout="fill" objectFit="contain" />
+            <Image
+              src={imageUrl}
+              alt="Overlay Image"
+              layout="fill"
+              objectFit="contain"
+              onLoadingComplete={handleLoadingComplete}
+            />
           </Box>
           <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {submission.description}
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {!isFree ? `$${submission.price}` : 'Free'}
-            </Typography>
-            <Button variant="contained" color="primary" onClick={isFree ? handleDownload : handleBuy} sx={{ mt: 2 }}>
-              {isFree ? 'Download' : 'Buy'}
-            </Button>
-            <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-              <Button variant="outlined" color="primary" onClick={onPrev}>
-                Previous
-              </Button>
-              <Button variant="outlined" color="primary" onClick={onNext}>
-                Next
-              </Button>
-            </Box>
+            <FMPButton onClick={isFree ? handleDownload : handleBuy} sx={{ mt: 2 }}>
+              {isFree ? 'Download' : `Buy for $${submission.price}`}
+            </FMPButton>
           </Box>
         </Box>
       </Box>
