@@ -713,6 +713,7 @@ export type RequestSubmission_orderBy =
 export type SubmissionPurchase = {
   id: Scalars['ID']['output'];
   submission: RequestSubmission;
+  price: Scalars['BigInt']['output'];
   purchaser: Scalars['Bytes']['output'];
   purchaseDate: Scalars['BigInt']['output'];
   blockNumber: Scalars['BigInt']['output'];
@@ -750,6 +751,14 @@ export type SubmissionPurchase_filter = {
   submission_not_ends_with?: InputMaybe<Scalars['String']['input']>;
   submission_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
   submission_?: InputMaybe<RequestSubmission_filter>;
+  price?: InputMaybe<Scalars['BigInt']['input']>;
+  price_not?: InputMaybe<Scalars['BigInt']['input']>;
+  price_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  price_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  price_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  price_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  price_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  price_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   purchaser?: InputMaybe<Scalars['Bytes']['input']>;
   purchaser_not?: InputMaybe<Scalars['Bytes']['input']>;
   purchaser_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -815,6 +824,7 @@ export type SubmissionPurchase_orderBy =
   | 'submission__blockNumber'
   | 'submission__blockTimestamp'
   | 'submission__transactionHash'
+  | 'price'
   | 'purchaser'
   | 'purchaseDate'
   | 'blockNumber'

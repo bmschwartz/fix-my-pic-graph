@@ -713,6 +713,7 @@ enum RequestSubmission_orderBy {
 type SubmissionPurchase {
   id: ID!
   submission: RequestSubmission!
+  price: BigInt!
   purchaser: Bytes!
   purchaseDate: BigInt!
   blockNumber: BigInt!
@@ -750,6 +751,14 @@ input SubmissionPurchase_filter {
   submission_not_ends_with: String
   submission_not_ends_with_nocase: String
   submission_: RequestSubmission_filter
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
   purchaser: Bytes
   purchaser_not: Bytes
   purchaser_gt: Bytes
@@ -815,6 +824,7 @@ enum SubmissionPurchase_orderBy {
   submission__blockNumber
   submission__blockTimestamp
   submission__transactionHash
+  price
   purchaser
   purchaseDate
   blockNumber
