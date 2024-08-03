@@ -4,6 +4,7 @@ import { BrowserProvider, Contract, Signer } from 'zksync-ethers';
 import FixMyPicFactorySchema from '@/public/artifacts/FixMyPicFactory.json';
 import RequestSubmissionSchema from '@/public/artifacts/RequestSubmission.json';
 import { EIP6963ProviderDetail } from '@/types/eip6963';
+import { convertUsdToEthWithoutRate } from '@/utils/currency';
 
 interface WalletParams {
   account: string;
@@ -129,7 +130,7 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
       const tx = await fixMyPicFactory.createRequestSubmission(
         requestAddress,
         description,
-        price || 0,
+        (price || 0) * 100, // convert to cents
         freePictureId || '',
         watermarkedPictureId || '',
         encryptedPictureId || ''
@@ -153,10 +154,47 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
       RequestSubmissionSchema.abi,
       await _getSigner(wallet, account)
     );
-    const price = await submissionContract.price();
+    const priceInCents = await submissionContract.price();
 
-    const tx = await submissionContract.purchaseSubmission({ value: price });
-    const receipt: ContractTransactionReceipt = await tx.wait();
+    const priceEth = await convertUsdToEthWithoutRate(Number(priceInCents / 100n));
+    const priceInWei = ethers.parseEther(priceEth);
+
+    console.log('DEBUG price', Number(priceInCents), Number(priceInCents / 100n), priceEth, priceInWei);
+
+    let receipt: ContractTransactionReceipt;
+    try {
+      const tx = await submissionContract.purchaseSubmission({ value: priceInWei });
+      receipt = await tx.wait();
+    } catch (error: any) {
+      console.error('Unable to purchase the submission:', error);
+      if (error.error && error.error.data) {
+        // Decode the error using the contract's interface
+        const decodedError = submissionContract.interface.parseError(error.error.data);
+        console.error(`Transaction failed with error: ${decodedError?.name}`);
+        switch (decodedError?.name) {
+          case 'InsufficientPayment':
+            console.error(
+              `Required: ${decodedError.args.required.toString()}, Provided: ${decodedError.args.provided.toString()}`
+            );
+            break;
+          case 'AlreadyPurchased':
+            console.error(
+              `Already purchased ${decodedError.args.submission.toString()} by ${decodedError.args.sender.toString()}`
+            );
+            break;
+          default:
+            if (error.reason) {
+              console.error('Transaction failed with reason:', error.reason);
+            } else {
+              console.error('Transaction failed:', error);
+            }
+            break;
+        }
+      } else {
+        console.error('Transaction failed:', error);
+      }
+      throw error;
+    }
 
     const event = receipt.logs
       .map((log) => submissionContract.interface.parseLog(log))

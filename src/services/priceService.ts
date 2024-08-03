@@ -69,13 +69,15 @@ async function fetchEthUsdPrice() {
       usdToEth: 1 / ethUsdPrice,
     };
 
-    console.log('ETH/USD Price:', ethUsdRate);
+    console.log('DEBUG ETH/USD Price:', ethUsdRate);
   } catch (error) {
     console.error('Error fetching ETH/USD price:', error);
   }
 }
 
+export function getEthUsdRate() {
+  return ethUsdRate;
+}
+
 fetchEthUsdPrice();
 setInterval(fetchEthUsdPrice, 60 * 1000);
-
-export { ethUsdRate };

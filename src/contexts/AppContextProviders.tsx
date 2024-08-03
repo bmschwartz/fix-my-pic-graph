@@ -3,7 +3,6 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { FullScreenLoader } from '@/components';
 import { FixMyPicContractService, getFixMyPicContractService } from '@/services/contractService';
 import { ContractServiceProvider } from './ContractServiceContext';
-import { EthUsdRateProvider } from './EthUsdRateContext';
 import { WalletProvider } from './WalletContext';
 
 interface AppProvidersProps {
@@ -30,11 +29,9 @@ const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   }
 
   return (
-    <EthUsdRateProvider>
-      <ContractServiceProvider contractService={contractService}>
-        <WalletProvider>{children}</WalletProvider>
-      </ContractServiceProvider>
-    </EthUsdRateProvider>
+    <ContractServiceProvider contractService={contractService}>
+      <WalletProvider>{children}</WalletProvider>
+    </ContractServiceProvider>
   );
 };
 

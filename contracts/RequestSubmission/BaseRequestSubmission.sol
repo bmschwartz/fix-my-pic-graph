@@ -7,7 +7,7 @@ import '@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol';
 import {Denominations} from '@chainlink/contracts/src/v0.8/Denominations.sol';
 
 contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
-  event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 purchaseDate);
+  event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 price, uint256 purchaseDate);
 
   address public request;
   address public submitter;
@@ -20,7 +20,11 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
   mapping(address => bool) public submissionPurchasers;
 
   FeedRegistryInterface internal priceFeed;
-  address internal ETH_PRICE_FEED_ADDRESS = 0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf;
+  address internal ETH_PRICE_FEED_ADDRESS = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
+
+  error InsufficientPayment(uint256 required, uint256 provided);
+  error AlreadyPurchased(address submission, address sender);
+  error PaymentFailed(address submission, address sender, uint256 value);
 
   function initialize(
     address _request,
@@ -46,22 +50,38 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
 
   function getLatestETHPrice() public view returns (uint256) {
     (, int ethPrice, , , ) = priceFeed.latestRoundData(Denominations.ETH, Denominations.USD);
-    return uint256(ethPrice) * 1e10; // Adjust for decimals
+    require(ethPrice > 0, 'ETH price is not available in getLatestETHPrice');
+    return uint256(ethPrice) * 1e10;
   }
 
   function purchaseSubmission() external payable nonReentrant {
     uint256 ethPriceInUsd = getLatestETHPrice();
-    uint256 priceInWei = (price * 1e18) / ethPriceInUsd;
+    require(ethPriceInUsd > 0, 'ETH price is not available in purchaseSubmission');
+    uint256 priceInUsd = price / 1e2;
+    require(priceInUsd > 0, 'Price in USD is not available');
+    uint256 priceInWei = (priceInUsd * 1e18) / ethPriceInUsd;
+    require(priceInWei > 0, 'Price in Wei is not available');
 
-    require(msg.value >= priceInWei, 'Insufficient payment');
-    require(!submissionPurchasers[msg.sender], 'Already purchased');
+    // This gives some wiggle room for price fluctuations
+    uint256 minimumAcceptedWei = (priceInWei * 99) / 100;
+    require(minimumAcceptedWei > 0, 'Minimum accepted Wei is not available');
+
+    if (msg.value < minimumAcceptedWei) {
+      revert InsufficientPayment(minimumAcceptedWei, msg.value);
+    }
+
+    if (submissionPurchasers[msg.sender]) {
+      revert AlreadyPurchased(address(this), msg.sender);
+    }
 
     (bool success, ) = submitter.call{value: msg.value}('');
-    require(success, 'Payment failed');
+    if (!success) {
+      revert PaymentFailed(address(this), msg.sender, msg.value);
+    }
 
     submissionPurchasers[msg.sender] = true;
 
-    emit SubmissionPurchased(address(this), msg.sender, block.timestamp);
+    emit SubmissionPurchased(address(this), msg.sender, msg.value, block.timestamp);
   }
 
   function hasPurchased(address _user) external view returns (bool) {

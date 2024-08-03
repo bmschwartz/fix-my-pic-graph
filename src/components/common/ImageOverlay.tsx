@@ -6,25 +6,19 @@ import React from 'react';
 import { FMPButton, FMPTypography } from '@/components';
 
 interface ImageOverlayProps {
-  imageUrl: string;
-  onClose: () => void;
-  description?: string;
   price?: number;
+  imageUrl: string;
+  description?: string;
+
+  onClose: () => void;
+  onDownload?: () => void;
 }
 
-const ImageOverlay: React.FC<ImageOverlayProps> = ({ imageUrl, onClose, description, price }) => {
+const ImageOverlay: React.FC<ImageOverlayProps> = ({ imageUrl, onClose, onDownload, description, price }) => {
   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if ((event.target as HTMLElement).dataset.overlay) {
       onClose();
     }
-  };
-
-  const handleDownload = () => {
-    // Handle download logic here
-  };
-
-  const handleBuy = () => {
-    // Handle buy logic here
   };
 
   return (
@@ -76,15 +70,9 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({ imageUrl, onClose, descript
           </FMPTypography>
         )}
         <Box sx={{ mt: 1, display: 'flex', gap: 2 }}>
-          {price === undefined || price === 0 ? (
-            <FMPButton variant="contained" color="primary" onClick={handleDownload}>
-              Download
-            </FMPButton>
-          ) : (
-            <FMPButton variant="contained" color="primary" onClick={handleBuy}>
-              Buy for ${price}
-            </FMPButton>
-          )}
+          <FMPButton variant="contained" color="primary" onClick={onDownload}>
+            {price === undefined || price === 0 ? 'Download' : `Buy for $${price}`}
+          </FMPButton>
         </Box>
       </Box>
     </Dialog>
