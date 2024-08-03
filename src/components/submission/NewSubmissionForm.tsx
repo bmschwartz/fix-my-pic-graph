@@ -45,7 +45,7 @@ const NewSubmissionForm: React.FC<NewSubmissionFormProps> = ({ requestId }) => {
 
   const [loadingLabel, setLoadingLabel] = useState('');
 
-  const { uploadImage } = useImageStore();
+  const { uploadImage, encryptPictureId } = useImageStore();
   const { contractService } = useContractService();
   const { selectedAccount: account, selectedWallet: wallet } = useWallet();
 
@@ -91,6 +91,9 @@ const NewSubmissionForm: React.FC<NewSubmissionFormProps> = ({ requestId }) => {
       setLoadingLabel(`Uploading image${!isFree ? 's' : ''}...`);
       const originalPictureId = await uploadImage({ file: originalPictureFile });
       let watermarkedPictureId: string | undefined;
+      const freePictureId: string | undefined = isFree ? originalPictureId : undefined;
+      const encryptedPictureId: string | undefined = !isFree ? await encryptPictureId(originalPictureId) : undefined;
+
       if (!isFree) {
         if (watermarkOption === WatermarkOptions.UPLOAD && watermarkPictureFile) {
           watermarkedPictureId = await uploadImage({ file: watermarkPictureFile });
@@ -104,15 +107,17 @@ const NewSubmissionForm: React.FC<NewSubmissionFormProps> = ({ requestId }) => {
 
       setLoadingLabel('Creating smart contract...');
 
-      await uploadImage({ file: originalPictureFile });
       await contractService.createSubmission({
         wallet,
         account,
         description,
-        price: parseFloat(price),
-        requestAddress: requestId,
+        freePictureId,
+        encryptedPictureId,
         watermarkedPictureId,
+        requestAddress: requestId,
+        price: isFree ? 0 : parseFloat(price || '0'),
       });
+
       router.push(`/request/${requestId}`);
       return;
     } catch (e) {
@@ -199,34 +204,36 @@ const NewSubmissionForm: React.FC<NewSubmissionFormProps> = ({ requestId }) => {
         label="This picture is free"
         sx={{ marginBottom: 3 }}
       />
-      <TextField
-        fullWidth
-        label="Price"
-        value={price}
-        disabled={loading || isFree}
-        onChange={(e) => setPrice(e.target.value)}
-        required={!isFree}
-        InputProps={{
-          startAdornment: <InputAdornment position="start">$</InputAdornment>,
-          inputProps: { step: '0.01' },
-          type: 'number',
-        }}
-        sx={{
-          backgroundColor: '#f9f9f9',
-          borderRadius: 1,
-          marginBottom: 3,
-          '& .MuiOutlinedInput-root': {
-            '&.Mui-focused fieldset': {
-              borderColor: '#000000',
+      {!isFree && (
+        <TextField
+          fullWidth
+          label="Price"
+          value={price}
+          disabled={loading || isFree}
+          onChange={(e) => setPrice(e.target.value)}
+          required={!isFree}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            inputProps: { step: '0.01' },
+            type: 'number',
+          }}
+          sx={{
+            backgroundColor: '#f9f9f9',
+            borderRadius: 1,
+            marginBottom: 3,
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-focused fieldset': {
+                borderColor: '#000000',
+              },
             },
-          },
-          '& .MuiInputLabel-root': {
-            '&.Mui-focused': {
-              color: '#000000',
+            '& .MuiInputLabel-root': {
+              '&.Mui-focused': {
+                color: '#000000',
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
+      )}
       <Divider sx={{ my: 3 }} />
       <Box
         sx={{

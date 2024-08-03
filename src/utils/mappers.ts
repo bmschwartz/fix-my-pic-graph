@@ -36,7 +36,7 @@ const mapRequestComment = (comment: GqlRequestComment): RequestComment => {
 const mapRequestSubmission = (submission: GqlRequestSubmission): RequestSubmission => {
   return {
     id: submission.id,
-    price: submission.price,
+    price: Number(submission.price),
     submitter: submission.submitter,
     description: submission.description,
     freePictureId: submission.freeImageId,

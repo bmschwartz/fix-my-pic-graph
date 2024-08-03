@@ -63,6 +63,7 @@
     "@matterlabs/hardhat-zksync-verify": "1.6.0",
     "@openzeppelin/contracts": "4.6.0",
     "@openzeppelin/contracts-upgradeable": "4.9.6",
+    "@types/formidable": "3.4.5",
     "@types/fs-extra": "11.0.4",
     "@types/klaw": "3.0.6",
     "@types/node": "20.14.11",

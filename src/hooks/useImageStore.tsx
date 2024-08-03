@@ -66,6 +66,21 @@ export const useImageStore = () => {
     return `${IMAGE_URL_ROOT}/${pictureId}`;
   };
 
+  const encryptPictureId = async (pictureId: string): Promise<string> => {
+    if (!pictureId) {
+      return '';
+    }
+
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/encrypt`, {
+        pictureId,
+      });
+      return response.data.encryptedPictureId;
+    } catch (e) {
+      throw new Error('Error encrypting picture id!');
+    }
+  };
+
   const getDecryptedImageUrl = async (submission: RequestSubmission): Promise<string> => {
     const { id: submissionAddress, encryptedPictureId } = submission;
 
@@ -74,7 +89,7 @@ export const useImageStore = () => {
     }
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/pinata/decrypt`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/decrypt`, {
         submissionAddress,
         encryptedPictureId,
         userAddress: account,
@@ -86,5 +101,5 @@ export const useImageStore = () => {
     }
   };
 
-  return { uploadImage, getFreeImageUrl, getDecryptedImageUrl };
+  return { uploadImage, getFreeImageUrl, getDecryptedImageUrl, encryptPictureId };
 };

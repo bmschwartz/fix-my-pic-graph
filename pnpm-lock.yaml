@@ -102,6 +102,9 @@ importers:
       '@openzeppelin/contracts-upgradeable':
         specifier: 4.9.6
         version: 4.9.6
+      '@types/formidable':
+        specifier: 3.4.5
+        version: 3.4.5
       '@types/fs-extra':
         specifier: 11.0.4
         version: 11.0.4
@@ -1952,6 +1955,9 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  '@types/formidable@3.4.5':
+    resolution: {integrity: sha512-s7YPsNVfnsng5L8sKnG/Gbb2tiwwJTY1conOkJzTMRvJAlLFW1nEua+ADsJQu8N1c0oTHx9+d5nqg10WuT9gHQ==}
 
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
@@ -9357,6 +9363,10 @@ snapshots:
       '@types/json-schema': 7.0.15
 
   '@types/estree@1.0.5': {}
+
+  '@types/formidable@3.4.5':
+    dependencies:
+      '@types/node': 20.14.11
 
   '@types/fs-extra@11.0.4':
     dependencies:

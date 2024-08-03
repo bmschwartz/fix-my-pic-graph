@@ -129,7 +129,7 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
       const tx = await fixMyPicFactory.createRequestSubmission(
         requestAddress,
         description,
-        price,
+        price || 0,
         freePictureId || '',
         watermarkedPictureId || '',
         encryptedPictureId || ''
