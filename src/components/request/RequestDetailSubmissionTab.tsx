@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Request } from '@/types/request';
 import { getImageUrl } from '@/utils/getImage';
 import LinkButton from '../common/LinkButton';
-import SubmissionGallery from '../submission/SubmissionGallery';
+import SubmissionGallery from '../common/SubmissionGallery';
 import SubmissionListItem from '../submission/SubmissionListItem';
 
 interface RequestDetailSubmissionTabProps {
@@ -45,17 +45,23 @@ const RequestDetailSubmissionTab: React.FC<RequestDetailSubmissionTabProps> = ({
       ) : (
         <Grid container spacing={2} sx={{ mt: 5 }}>
           {request.submissions.map((submission, index) => (
-            <Grid item xs={12} sm={6} md={4} key={submission.id}>
-              <SubmissionListItem submission={submission} onClick={() => handleSubmissionClick(index)} />
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={submission.id}
+              onClick={() => handleSubmissionClick(index)}
+              sx={{ cursor: 'pointer' }}
+            >
+              <SubmissionListItem submission={submission} />
             </Grid>
           ))}
         </Grid>
       )}
       {selectedSubmissionIndex !== null && (
         <SubmissionGallery
-          imageUrls={request.submissions.map((submission) =>
-            getImageUrl(submission.watermarkedPictureId || submission.freePictureId!)
-          )}
+          submissions={request.submissions}
           currentIndex={selectedSubmissionIndex}
           onClose={handleCloseGallery}
           onNext={() => setSelectedSubmissionIndex((selectedSubmissionIndex + 1) % request.submissions.length)}
