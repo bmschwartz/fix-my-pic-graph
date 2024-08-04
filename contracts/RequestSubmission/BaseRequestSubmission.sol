@@ -54,7 +54,7 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     return uint256(ethPrice) * 1e10;
   }
 
-  function purchaseSubmission() external payable nonReentrant {
+  function purchaseSubmission() external payable {
     uint256 ethPriceInUsd = getLatestETHPrice();
     require(ethPriceInUsd > 0, 'ETH price is not available in purchaseSubmission');
     uint256 priceInUsd = price / 1e2;
@@ -67,9 +67,8 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     require(minimumAcceptedWei > 0, 'Minimum accepted Wei is not available');
 
     if (msg.value < minimumAcceptedWei) {
-      revert InsufficientPayment(minimumAcceptedWei, msg.value);
+      revert InsufficientPayment(0, msg.value);
     }
-
     if (submissionPurchasers[msg.sender]) {
       revert AlreadyPurchased(address(this), msg.sender);
     }

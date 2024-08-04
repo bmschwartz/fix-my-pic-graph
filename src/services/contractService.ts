@@ -163,7 +163,8 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
 
     let receipt: ContractTransactionReceipt;
     try {
-      const tx = await submissionContract.purchaseSubmission({ value: priceInWei });
+      const tx = await submissionContract.purchaseSubmission();
+      // const tx = await submissionContract.purchaseSubmission({ value: priceInWei });
       receipt = await tx.wait();
     } catch (error: any) {
       console.error('Unable to purchase the submission:', error);
@@ -196,12 +197,12 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
       throw error;
     }
 
-    const event = receipt.logs
-      .map((log) => submissionContract.interface.parseLog(log))
-      .find((log) => log && log.name === 'SubmissionPurchased');
-    if (!event) {
-      throw new Error('SubmissionPurchased event not found');
-    }
+    // const event = receipt.logs
+    //   .map((log) => submissionContract.interface.parseLog(log))
+    //   .find((log) => log && log.name === 'SubmissionPurchased');
+    // if (!event) {
+    //   throw new Error('SubmissionPurchased event not found');
+    // }
 
     return true;
   };

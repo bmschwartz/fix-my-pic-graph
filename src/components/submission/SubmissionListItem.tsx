@@ -3,7 +3,6 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 import { useContractService } from '@/hooks/useContractService';
-import { useImageStore } from '@/hooks/useImageStore';
 import { useWallet } from '@/hooks/useWallet';
 import { RequestSubmission } from '@/types/submission';
 import { getImageUrl } from '@/utils/getImage';
@@ -16,7 +15,6 @@ interface SubmissionListItemProps {
 }
 
 const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) => {
-  const { getDecryptedImageUrl } = useImageStore();
   const { contractService } = useContractService();
   const { selectedWallet, selectedAccount } = useWallet();
 
@@ -64,9 +62,6 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) =
             if (!submission.price) {
               window.open(getImageUrl(submission.freePictureId!), '_blank');
             }
-
-            const url = await getDecryptedImageUrl(submission);
-            if (!url) return;
 
             if (!selectedWallet || !selectedAccount) return;
 
