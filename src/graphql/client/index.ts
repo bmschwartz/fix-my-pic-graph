@@ -21,8 +21,8 @@ import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext
 import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import { ImportFn } from '@graphql-mesh/types';
-import type { FixmypicGraphTypes } from './sources/fixmypic-graph/types';
-import * as importedModule$0 from "./sources/fixmypic-graph/introspectionSchema";
+import type { FixmypicTypes } from './sources/fixmypic/types';
+import * as importedModule$0 from "./sources/fixmypic/introspectionSchema";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1282,7 +1282,7 @@ export type DirectiveResolvers<ContextType = MeshContext> = ResolversObject<{
   derivedFrom?: derivedFromDirectiveResolver<any, any, ContextType>;
 }>;
 
-export type MeshContext = FixmypicGraphTypes.Context & BaseMeshContext;
+export type MeshContext = FixmypicTypes.Context & BaseMeshContext;
 
 
 const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '..');
@@ -1290,7 +1290,7 @@ const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/',
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {
-    case ".graphclient/sources/fixmypic-graph/introspectionSchema":
+    case ".graphclient/sources/fixmypic/introspectionSchema":
       return Promise.resolve(importedModule$0) as T;
     
     default:
@@ -1323,22 +1323,22 @@ const cache = new (MeshCache as any)({
 const sources: MeshResolvedSource[] = [];
 const transforms: MeshTransform[] = [];
 const additionalEnvelopPlugins: MeshPlugin<any>[] = [];
-const fixmypicGraphTransforms = [];
+const fixmypicTransforms = [];
 const additionalTypeDefs = [] as any[];
-const fixmypicGraphHandler = new GraphqlHandler({
-              name: "fixmypic-graph",
-              config: {"endpoint":"http://localhost:8000/subgraphs/name/fixmypic-graph"},
+const fixmypicHandler = new GraphqlHandler({
+              name: "fixmypic",
+              config: {"endpoint":"https://api.studio.thegraph.com/query/84465/fixmypic/version/latest"},
               baseDir,
               cache,
               pubsub,
-              store: sourcesStore.child("fixmypic-graph"),
-              logger: logger.child("fixmypic-graph"),
+              store: sourcesStore.child("fixmypic"),
+              logger: logger.child("fixmypic"),
               importFn,
             });
 sources[0] = {
-          name: 'fixmypic-graph',
-          handler: fixmypicGraphHandler,
-          transforms: fixmypicGraphTransforms
+          name: 'fixmypic',
+          handler: fixmypicHandler,
+          transforms: fixmypicTransforms
         }
 const additionalResolvers = [] as any[]
 const merger = new(BareMerger as any)({

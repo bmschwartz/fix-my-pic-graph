@@ -9,11 +9,7 @@ contract BaseRequestComment is Initializable {
   string public text;
   uint256 public createdAt;
 
-  function initialize(
-    address _request,
-    string calldata _text,
-    address _commenter
-  ) external initializer {
+  function initialize(address _request, string calldata _text, address _commenter) external initializer {
     request = _request;
     text = _text;
     commenter = _commenter;

@@ -10,7 +10,6 @@ export const getEthUsdRate = async (): Promise<number> => {
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/prices`);
       ethToUsdRate = data.ethToUsdRate;
-      console.log('DEBUG ETH to USD rate:', data);
     } catch (e: any) {
       console.error(e);
       throw new Error('DEBUG Failed to get ETH to USD rate', e);
@@ -51,7 +50,6 @@ export const centsToWei = async (priceInCents: number): Promise<string> => {
 
   const oneUsdInWei = parseUnits((1 / ethUsdRate).toFixed(18), 18);
   const usdAmountInWei = oneUsdInWei * usdAmount;
-  console.log('DEBUG Inputs:', priceInCents, usdAmount, ethUsdRate, oneUsdInWei, usdAmountInWei);
 
   return usdAmountInWei.toString();
 };

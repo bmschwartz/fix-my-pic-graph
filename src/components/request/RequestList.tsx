@@ -10,10 +10,10 @@ const EmptyState: React.FC = () => {
   return (
     <Box sx={{ textAlign: 'center', py: 10 }}>
       <Typography variant="h6" gutterBottom fontWeight={600}>
-        No Submissions Yet
+        No Requests Yet
       </Typography>
       <Typography variant="body1" color="textSecondary">
-        Be the first to submit your work!
+        Be the first to create a request!
       </Typography>
     </Box>
   );

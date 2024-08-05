@@ -1,8 +1,8 @@
 sources:
-  - name: fixmypic-graph
+  - name: fixmypic
     handler:
       graphql:
-        endpoint: http://localhost:8000/subgraphs/name/fixmypic-graph
+        endpoint: https://api.studio.thegraph.com/query/84465/fixmypic/version/latest
 
 documents:
   - ./src/graphql/**/*.graphql

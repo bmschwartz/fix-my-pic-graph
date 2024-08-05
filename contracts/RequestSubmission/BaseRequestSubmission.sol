@@ -3,8 +3,6 @@ pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
-import '@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol';
-import {Denominations} from '@chainlink/contracts/src/v0.8/Denominations.sol';
 
 contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
   event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 price, uint256 purchaseDate);
@@ -18,9 +16,6 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
   string public encryptedImageId;
   string public watermarkedImageId;
   mapping(address => bool) public submissionPurchasers;
-
-  FeedRegistryInterface internal priceFeed;
-  address internal ETH_PRICE_FEED_ADDRESS = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
 
   error InsufficientPayment(uint256 required, uint256 provided);
   error AlreadyPurchased(address submission, address sender);
@@ -45,16 +40,9 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     encryptedImageId = _encryptedImageId;
     submitter = _submitter;
     createdAt = block.timestamp;
-    priceFeed = FeedRegistryInterface(ETH_PRICE_FEED_ADDRESS);
   }
 
-  function getLatestETHPrice() public view returns (uint256) {
-    (, int ethPrice, , , ) = priceFeed.latestRoundData(Denominations.ETH, Denominations.USD);
-    require(ethPrice > 0, 'ETH price is not available in getLatestETHPrice');
-    return uint256(ethPrice) * 1e10;
-  }
-
-  function purchaseSubmission() external payable {
+  function purchaseSubmission() external payable nonReentrant {
     uint256 ethPriceInUsd = getLatestETHPrice();
     require(ethPriceInUsd > 0, 'ETH price is not available in purchaseSubmission');
     uint256 priceInUsd = price / 1e2;
