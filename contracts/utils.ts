@@ -11,7 +11,7 @@ import '@matterlabs/hardhat-zksync-verify/dist/src/type-extensions';
 dotenv.config();
 
 export const getProvider = () => {
-  // @ts-ignore
+  // @ts-expect-error URL is not defined in the HardhatNetworkConfig
   const rpcUrl = hre.network.config.url;
   if (!rpcUrl)
     throw `⛔️ RPC URL wasn't found in "${hre.network.name}"! Please add a "url" field to the network config in hardhat.config.ts`;
@@ -59,13 +59,6 @@ export const verifyContract = async (data: {
   return verificationRequestId;
 };
 
-type DeploymentProxy = {
-  /**
-   * Address of the proxy contract
-   */
-  address: string;
-};
-
 type DeployContractOptions = {
   /**
    * If true, the deployment process will not print any logs
@@ -88,9 +81,13 @@ type DeployContractOptions = {
    */
   proxyAddress?: string;
   /**
+   * If specified, the contract will be deployed as a proxy with the given arguments
+   */
+  proxyConstructorArgs?: any[];
+  /**
    * Arguments to the constructor initializer
    */
-  upgradeConstructorArgs?: object;
+  upgradeConstructorArgs?: any[];
 };
 export const deployContract = async (
   contractArtifactName: string,
@@ -125,13 +122,16 @@ export const deployContract = async (
   let contract: ethers.Contract;
 
   if (options?.asProxy) {
-    console.log(`Deploying ${artifact.contractName} as proxy`);
-    contract = await hre.zkUpgrades.deployProxy(wallet, artifact, constructorArguments, {
+    const initializerArgs = options?.proxyConstructorArgs || constructorArguments || [];
+    console.log(`Deploying ${artifact.contractName} as proxy with args: ${options?.proxyConstructorArgs || []}`);
+    contract = await hre.zkUpgrades.deployProxy(wallet, artifact, initializerArgs, {
       initializer: 'initialize',
     });
   } else if (options?.proxyAddress) {
     console.log('upgradeProxy', options?.proxyAddress, artifact.contractName);
-    contract = await hre.zkUpgrades.upgradeProxy(wallet, options?.proxyAddress, artifact);
+    contract = await hre.zkUpgrades.upgradeProxy(wallet, options?.proxyAddress, artifact, {
+      constructorArgs: options?.upgradeConstructorArgs,
+    });
   } else {
     contract = await deployer.deploy(artifact, constructorArguments);
   }

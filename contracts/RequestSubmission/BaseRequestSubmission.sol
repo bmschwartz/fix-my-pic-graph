@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '../PriceOracle.sol';
 
 contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
   event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 price, uint256 purchaseDate);
@@ -17,6 +18,8 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
   string public watermarkedImageId;
   mapping(address => bool) public submissionPurchasers;
 
+  PriceOracle internal priceOracle;
+
   error InsufficientPayment(uint256 required, uint256 provided);
   error AlreadyPurchased(address submission, address sender);
   error PaymentFailed(address submission, address sender, uint256 value);
@@ -28,7 +31,8 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     string calldata _freeImageId,
     string calldata _watermarkedImageId,
     string calldata _encryptedImageId,
-    address _submitter
+    address _submitter,
+    address _priceOracle
   ) external initializer {
     __ReentrancyGuard_init();
 
@@ -40,12 +44,13 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     encryptedImageId = _encryptedImageId;
     submitter = _submitter;
     createdAt = block.timestamp;
+    priceOracle = PriceOracle(_priceOracle);
   }
 
   function purchaseSubmission() external payable nonReentrant {
-    uint256 ethPriceInUsd = getLatestETHPrice();
+    uint256 ethPriceInUsd = priceOracle.getLatestETHPrice();
     require(ethPriceInUsd > 0, 'ETH price is not available in purchaseSubmission');
-    uint256 priceInUsd = price / 1e2;
+    uint256 priceInUsd = price / 1e2; // price is in cents, so we divide by 100 to get USD
     require(priceInUsd > 0, 'Price in USD is not available');
     uint256 priceInWei = (priceInUsd * 1e18) / ethPriceInUsd;
     require(priceInWei > 0, 'Price in Wei is not available');
@@ -55,7 +60,7 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     require(minimumAcceptedWei > 0, 'Minimum accepted Wei is not available');
 
     if (msg.value < minimumAcceptedWei) {
-      revert InsufficientPayment(0, msg.value);
+      revert InsufficientPayment(minimumAcceptedWei, msg.value);
     }
     if (submissionPurchasers[msg.sender]) {
       revert AlreadyPurchased(address(this), msg.sender);

@@ -5,8 +5,11 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '../PictureRequest.sol';
 import '../RequestSubmission.sol';
 import '../RequestComment.sol';
+import '../PriceOracle.sol';
 
 contract BaseFixMyPicFactory is Initializable {
+  address public priceOracle;
+
   event PictureRequestCreated(
     address indexed request,
     string title,
@@ -38,7 +41,9 @@ contract BaseFixMyPicFactory is Initializable {
     uint256 createdAt
   );
 
-  function initialize() public initializer {}
+  function initialize(address _priceOracle) public initializer {
+    priceOracle = _priceOracle;
+  }
 
   function createPictureRequest(
     string calldata _title,
@@ -82,7 +87,8 @@ contract BaseFixMyPicFactory is Initializable {
       _freeImageId,
       _watermarkedImageId,
       _encryptedImageId,
-      msg.sender
+      msg.sender,
+      priceOracle
     );
 
     emit RequestSubmissionCreated(

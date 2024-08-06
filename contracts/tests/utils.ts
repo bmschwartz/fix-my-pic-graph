@@ -4,6 +4,8 @@ import { ethers } from 'hardhat';
 import FixMyPicFactorySchema from '../../public/artifacts/FixMyPicFactory.json';
 import { deployContract, getWallet } from '../utils';
 
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
 interface Account {
   address: string;
   key: string;
@@ -35,12 +37,24 @@ interface PurchaseSubmissionProps {
   submissionAddress: string;
 }
 
-export async function deployFixMyPicFactory(account: Account): Promise<Contract> {
+export async function deployPriceOracle(account: Account): Promise<Contract> {
+  const wallet = getWallet(account.key);
+
+  const contractName = 'PriceOracle';
+
+  return deployContract(contractName, [], { wallet, asProxy: true });
+}
+
+export async function deployFixMyPicFactory(account: Account, priceOracleAddress: string): Promise<Contract> {
   const wallet = getWallet(account.key);
 
   const contractName = 'FixMyPicFactory';
 
-  return deployContract(contractName, [], { wallet, asProxy: true });
+  return deployContract(contractName, [], {
+    wallet,
+    asProxy: true,
+    proxyConstructorArgs: [priceOracleAddress],
+  });
 }
 
 export async function _getSigner({ address, key }: Account): Promise<Signer> {
