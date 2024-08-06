@@ -21,11 +21,11 @@ contract BasePriceOracle is Initializable {
 
   function getLatestETHPrice() public view returns (uint256) {
     if (useFixedPrice) {
-      return FIXED_PRICE * 1e10; // Return fixed price scaled to 18 decimals
+      return FIXED_PRICE;
     }
 
-    (, int ethPrice, , , ) = priceFeed.latestRoundData(Denominations.ETH, Denominations.USD);
+    (, int256 ethPrice, , , ) = priceFeed.latestRoundData(Denominations.ETH, Denominations.USD);
     require(ethPrice > 0, 'ETH price is not available in getLatestETHPrice');
-    return uint256(ethPrice) * 1e10; // Scale price to 18 decimals
+    return uint256(ethPrice); // Price already comes with 8 decimals
   }
 }

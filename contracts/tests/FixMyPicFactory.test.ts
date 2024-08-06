@@ -1,9 +1,8 @@
 import { expect } from 'chai';
-import { Contract, ethers } from 'ethers';
+import { Contract, ContractTransactionReceipt, ethers } from 'ethers';
 
 import RequestSubmissionSchema from '../../public/artifacts/RequestSubmission.json';
-import { convertUsdToEth } from '../../src/utils/currency';
-import { fetchEthUsdPrice } from '../../src/utils/fetchEthUsdPrice';
+import { convertUsdCentsToWei } from '../../src/utils/currency';
 import {
   _createPictureRequest,
   _createRequestSubmission,
@@ -45,14 +44,13 @@ describe('FixMyPicFactory', function () {
   let pictureRequest: Contract;
   let requestSubmission: Contract;
   let fixMyPicFactoryAddress: string;
-  let ethToUsd: number;
+  let ethToUsd: bigint;
 
   beforeAll(async function () {
-    const ethUsdRates = await fetchEthUsdPrice();
-    ethToUsd = ethUsdRates.ethToUsd;
-
     priceOracle = await deployPriceOracle(ACCOUNTS.DEPLOYER);
-    console.log('priceOracle:', priceOracle, await priceOracle.getAddress());
+    ethToUsd = await priceOracle.getLatestETHPrice();
+    console.log('ETH to USD:', ethToUsd, typeof ethToUsd);
+
     fixMyPicFactory = await deployFixMyPicFactory(ACCOUNTS.DEPLOYER, await priceOracle.getAddress());
     fixMyPicFactoryAddress = await fixMyPicFactory.getAddress();
   });
@@ -62,106 +60,93 @@ describe('FixMyPicFactory', function () {
     expect(fixMyPicFactoryAddress).to.not.be.undefined;
   });
 
-  // it('should create a new picture request', async function () {
-  //   const title = 'Request Title';
-  //   const description = 'Request Description';
-  //   const imageId = 'Image123';
-  //   const budget = 500; // 500 cents = $5
-  //   const expiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 1 day from now
+  it('should create a new picture request', async function () {
+    const title = 'Request Title';
+    const description = 'Request Description';
+    const imageId = 'Image123';
+    const budget = 500; // 500 cents = $5
+    const expiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 1 day from now
 
-  //   pictureRequest = await _createPictureRequest({
-  //     account: ACCOUNTS.ONE,
-  //     title,
-  //     description,
-  //     imageId,
-  //     budget,
-  //     expiresAt,
-  //     factoryAddress: fixMyPicFactoryAddress,
-  //   });
+    pictureRequest = await _createPictureRequest({
+      account: ACCOUNTS.ONE,
+      title,
+      description,
+      imageId,
+      budget,
+      expiresAt,
+      factoryAddress: fixMyPicFactoryAddress,
+    });
 
-  //   expect(await pictureRequest.title()).to.equal(title);
-  //   expect(await pictureRequest.description()).to.equal(description);
-  //   expect(await pictureRequest.imageId()).to.equal(imageId);
-  //   expect(await pictureRequest.budget()).to.equal(budget);
-  //   expect(await pictureRequest.expiresAt()).to.equal(expiresAt);
-  // });
+    expect(await pictureRequest.title()).to.equal(title);
+    expect(await pictureRequest.description()).to.equal(description);
+    expect(await pictureRequest.imageId()).to.equal(imageId);
+    expect(await pictureRequest.budget()).to.equal(budget);
+    expect(await pictureRequest.expiresAt()).to.equal(expiresAt);
+  });
 
-  // it('should create a new request submission', async function () {
-  //   const requestAddress = await pictureRequest.getAddress();
-  //   const description = 'Submission Description';
-  //   const price = 500; // 500 cents = $5
-  //   const freeImageId = 'FreeImage123';
-  //   const watermarkedImageId = 'WatermarkedImage123';
-  //   const encryptedImageId = 'EncryptedImage123';
+  it('should create a new request submission', async function () {
+    const requestAddress = await pictureRequest.getAddress();
+    const description = 'Submission Description';
+    const price = 500; // 500 cents = $5
+    const freeImageId = 'FreeImage123';
+    const watermarkedImageId = 'WatermarkedImage123';
+    const encryptedImageId = 'EncryptedImage123';
 
-  //   requestSubmission = await _createRequestSubmission({
-  //     account: ACCOUNTS.TWO,
-  //     factoryAddress: fixMyPicFactoryAddress,
-  //     requestAddress,
-  //     description,
-  //     price,
-  //     freeImageId,
-  //     watermarkedImageId,
-  //     encryptedImageId,
-  //   });
+    requestSubmission = await _createRequestSubmission({
+      account: ACCOUNTS.TWO,
+      factoryAddress: fixMyPicFactoryAddress,
+      requestAddress,
+      description,
+      price,
+      freeImageId,
+      watermarkedImageId,
+      encryptedImageId,
+    });
 
-  //   expect(await requestSubmission.description()).to.equal(description);
-  //   expect(await requestSubmission.price()).to.equal(price);
-  //   expect(await requestSubmission.freeImageId()).to.equal(freeImageId);
-  //   expect(await requestSubmission.watermarkedImageId()).to.equal(watermarkedImageId);
-  //   expect(await requestSubmission.encryptedImageId()).to.equal(encryptedImageId);
-  // });
+    expect(await requestSubmission.description()).to.equal(description);
+    expect(await requestSubmission.price()).to.equal(price);
+    expect(await requestSubmission.freeImageId()).to.equal(freeImageId);
+    expect(await requestSubmission.watermarkedImageId()).to.equal(watermarkedImageId);
+    expect(await requestSubmission.encryptedImageId()).to.equal(encryptedImageId);
+  });
 
-  // describe('Purchase Request Submission', function () {
-  //   it('should purchase a request submission', async function () {
-  //     const priceInCents = await requestSubmission.price();
+  describe('Purchase Request Submission', function () {
+    it('should purchase a request submission', async function () {
+      const priceInCents = await requestSubmission.price();
 
-  //     const priceEth = convertUsdToEth(Number(priceInCents / 100n), ethToUsd);
-  //     const priceInWei = ethers.parseEther(priceEth);
+      console.log('DEBUG inputs:', priceInCents, ethToUsd);
 
-  //     const signer = await _getSigner(ACCOUNTS.THREE);
+      const priceInWei = convertUsdCentsToWei(priceInCents, ethToUsd);
 
-  //     const submissionContract = new ethers.Contract(
-  //       await requestSubmission.getAddress(),
-  //       RequestSubmissionSchema.abi,
-  //       signer
-  //     );
+      const signer = await _getSigner(ACCOUNTS.THREE);
 
-  //     try {
-  //       console.log('calling getEthUsdPrice');
-  //       const ethPrice = await submissionContract.getEthUsdPrice();
-  //       console.log('ethPrice:', ethPrice);
-  //       // Assuming `tx` contains the price in wei
-  //       const ethPriceInUsd = ethers.formatUnits(ethPrice, 18); // Convert from wei to ether
+      const submissionContract = new ethers.Contract(
+        await requestSubmission.getAddress(),
+        RequestSubmissionSchema.abi,
+        signer
+      );
 
-  //       console.log('Latest ETH price in USD:', ethPriceInUsd);
-  //     } catch (error) {
-  //       console.error('Error during getLatestETHPrice:', error);
-  //       throw error;
-  //     }
+      try {
+        console.log('DEBUG price', priceInCents, priceInWei);
+        const tx = await submissionContract.purchaseSubmission({ value: priceInWei });
+        console.log('DEBUG tx:', tx);
+        const receipt: ContractTransactionReceipt = await tx.wait();
+        console.log('DEBUG receipt:', receipt);
 
-  //     // try {
-  //     //   console.log('DEBUG price', priceInCents, priceEth, priceInWei);
-  //     //   const tx = await submissionContract.purchaseSubmission({ value: priceInWei });
-  //     //   // const tx = await submissionContract.purchaseSubmission();
-  //     //   console.log('DEBUG tx:', tx);
-  //     //   const receipt: ContractTransactionReceipt = await tx.wait();
-  //     //   console.log('DEBUG receipt:', receipt);
+        if (receipt.status !== 1) {
+          console.error('Transaction failed with status:', receipt.status);
+          console.error('Transaction receipt:', receipt);
+          throw new Error('Failed to purchase request submission');
+        }
 
-  //     //   if (receipt.status !== 1) {
-  //     //     console.error('Transaction failed with status:', receipt.status);
-  //     //     console.error('Transaction receipt:', receipt);
-  //     //     throw new Error('Failed to purchase request submission');
-  //     //   }
-
-  //     //   const hasPurchased = await requestSubmission.hasPurchased(await signer.getAddress());
-  //     //   expect(hasPurchased).to.be.true;
-  //     // } catch (error) {
-  //     //   console.error('Error during purchase submission:', error);
-  //     //   throw error;
-  //     // }
-  //   });
-  // });
+        const hasPurchased = await requestSubmission.hasPurchased(await signer.getAddress());
+        expect(hasPurchased).to.be.true;
+      } catch (error) {
+        console.error('Error during purchase submission:', error);
+        throw error;
+      }
+    });
+  });
 
   // it('should create a new request comment', async function () {
   //   const requestAddress = await pictureRequest.getAddress();

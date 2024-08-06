@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parseUnits } from 'ethers';
+import { ethers, parseUnits } from 'ethers';
 
 import { delay } from './delay';
 
@@ -24,13 +24,14 @@ export const getEthUsdRate = async (): Promise<number> => {
 };
 
 export const convertUsdToEth = (usdAmount: number | string, rate: number): string => {
-  if (usdAmount === 0) {
+  if (usdAmount === 0 || usdAmount === '0') {
     return '0';
   }
 
   const ethAmount = Number(usdAmount) / rate;
   const ethString = String(ethAmount);
   const [integer, fraction] = ethString.split('.');
+  console.log('DEBUG >> ', integer, fraction);
   return integer + '.' + fraction.substring(0, 18);
 };
 
@@ -44,14 +45,11 @@ export const convertEthToUsd = (ethAmount: number | string, rate: number): strin
   return usdAmount.toFixed(2);
 };
 
-export const centsToWei = async (priceInCents: number): Promise<string> => {
-  const ethUsdRate = await getEthUsdRate();
-  const usdAmount = BigInt(priceInCents) / 100n;
+export const convertUsdCentsToWei = (priceInCents: bigint, ethUsdRate: bigint): bigint => {
+  // Calculate the amount of cents in Wei directly to avoid precision loss
+  const priceInWei = (priceInCents * 10n ** 18n) / ethUsdRate;
 
-  const oneUsdInWei = parseUnits((1 / ethUsdRate).toFixed(18), 18);
-  const usdAmountInWei = oneUsdInWei * usdAmount;
-
-  return usdAmountInWei.toString();
+  return priceInWei;
 };
 
 export const convertEthToUsdWithoutRate = async (ethAmount: number | string): Promise<string> => {

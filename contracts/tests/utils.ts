@@ -42,7 +42,7 @@ export async function deployPriceOracle(account: Account): Promise<Contract> {
 
   const contractName = 'PriceOracle';
 
-  return deployContract(contractName, [], { wallet, asProxy: true });
+  return deployContract(contractName, [], { wallet, asProxy: true, proxyConstructorArgs: [ZERO_ADDRESS] });
 }
 
 export async function deployFixMyPicFactory(account: Account, priceOracleAddress: string): Promise<Contract> {
