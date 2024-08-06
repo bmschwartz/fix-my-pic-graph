@@ -2,17 +2,15 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const usePrices = () => {
-  const [ethToUsd, setEthToUsd] = useState<number | null>(null);
-  const [usdToEth, setUsdToEth] = useState<number | null>(null);
+  const [ethPrice, setEthPrice] = useState<bigint>(0n);
 
   useEffect(() => {
     const fetchPrices = async () => {
       try {
         const {
-          data: { ethToUsdRate, usdToEthRate },
+          data: { fetchedEthPrice },
         } = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/prices`);
-        setEthToUsd(ethToUsdRate);
-        setUsdToEth(usdToEthRate);
+        setEthPrice(fetchedEthPrice);
       } catch (e) {
         console.error(e);
       }
@@ -22,8 +20,7 @@ const usePrices = () => {
   }, []);
 
   return {
-    ethToUsd,
-    usdToEth,
+    ethPrice,
   };
 };
 

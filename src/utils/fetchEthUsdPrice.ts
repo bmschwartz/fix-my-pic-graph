@@ -54,23 +54,23 @@ const aggregatorV3InterfaceABI = [
 ];
 
 interface EthUsdRate {
-  ethToUsd: number;
-  usdToEth: number;
+  ethToUsd: bigint;
+  usdToEth: bigint;
 }
 
-export let ethUsdRate = {
-  ethToUsd: 0,
-  usdToEth: 0,
+export let ethUsdRate: EthUsdRate = {
+  ethToUsd: BigInt(0),
+  usdToEth: BigInt(0),
 };
 
 export async function fetchEthUsdPrice(): Promise<EthUsdRate> {
   try {
     const priceFeed = new ethers.Contract(ethUsdPriceFeedAddress, aggregatorV3InterfaceABI, provider);
-    const roundData = await priceFeed.latestRoundData();
-    const ethUsdPrice = Number(roundData.answer) / 1e8;
+    const roundData: { answer: bigint } = await priceFeed.latestRoundData();
+    const ethUsdPrice = roundData.answer;
     ethUsdRate = {
       ethToUsd: ethUsdPrice,
-      usdToEth: 1 / ethUsdPrice,
+      usdToEth: BigInt(1) / ethUsdPrice,
     };
 
     return ethUsdRate;

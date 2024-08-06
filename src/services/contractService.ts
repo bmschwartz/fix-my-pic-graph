@@ -4,7 +4,7 @@ import { BrowserProvider, Contract, Signer } from 'zksync-ethers';
 import FixMyPicFactorySchema from '@/public/artifacts/FixMyPicFactory.json';
 import RequestSubmissionSchema from '@/public/artifacts/RequestSubmission.json';
 import { EIP6963ProviderDetail } from '@/types/eip6963';
-import { convertUsdToEthWithoutRate } from '@/utils/currency';
+import { convertUsdCentsToWei, getEthPrice } from '@/utils/currency';
 
 interface WalletParams {
   account: string;
@@ -156,10 +156,10 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
     );
     const priceInCents = await submissionContract.price();
 
-    const priceEth = await convertUsdToEthWithoutRate(Number(priceInCents / 100n));
-    const priceInWei = ethers.parseEther(priceEth);
+    const ethPrice = await getEthPrice();
+    const priceInWei = convertUsdCentsToWei(priceInCents, ethPrice);
 
-    console.log('DEBUG price', Number(priceInCents), Number(priceInCents / 100n), priceEth, priceInWei);
+    console.log('DEBUG price', priceInCents, ethPrice, priceInWei);
 
     let receipt: ContractTransactionReceipt;
     try {
