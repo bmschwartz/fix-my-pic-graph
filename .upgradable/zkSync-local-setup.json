@@ -1,0 +1,127 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xC00515D76a50D523550C1DA1727cf9Eab8f560F2",
+    "txHash": "0x3f08f457802588c716e3a7649cd39b9db91d83381da38d77628e58ce8a2a00c0"
+  },
+  "proxies": [
+    {
+      "address": "0x0827b91b242AAc9Fa0181586b5486bbe1B7cc5e1",
+      "txHash": "0x7e66fcd3a28d2194939db0e0f77f3a44104f95e586bbe7bbdd6f04a371e65b83",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB9D6120056a5FbbBEDE2016CA30A41c2A43D5aA9",
+      "txHash": "0x5560400eb120d2ae2be17cb4821dc9786646e44b1bf7eedaf413cf1b45e03c62",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "a2da510b244a18010535462d833c62c4e2e38a20fd6ad5ead2ea3d71b9e9901b": {
+      "address": "0x9e25820E1f5682478235C45fC2c607E8aA9DBF4E",
+      "txHash": "0xcc2f3bf6dccfac64b8890c91980e7b0e0b68cdb7b10d92afd3dbc402fb63adaa",
+      "layout": {
+        "solcVersion": "0.8.24",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "dataFeed",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_contract(AggregatorV3Interface)162",
+            "contract": "BasePriceOracle",
+            "src": "contracts/PriceOracle/BasePriceOracle.sol:9"
+          },
+          {
+            "label": "useFixedPrice",
+            "offset": 22,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "BasePriceOracle",
+            "src": "contracts/PriceOracle/BasePriceOracle.sol:10"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(AggregatorV3Interface)162": {
+            "label": "contract AggregatorV3Interface",
+            "numberOfBytes": "20"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "6b04643850a8cc25c4f6bc1659caf5f0cf4d3f78062c943d8e368d39424e979f": {
+      "address": "0xc4dcc15DFE5e0Af629Ee593ec4FE92a41434AC23",
+      "txHash": "0xfd93d4ece1404c1fd8ad811230e0d8462337188aedb56a46ffafe6e8026163bf",
+      "layout": {
+        "solcVersion": "0.8.24",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "priceOracle",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "BaseFixMyPicFactory",
+            "src": "contracts/FixMyPicFactory/BaseFixMyPicFactory.sol:11"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    }
+  }
+}
