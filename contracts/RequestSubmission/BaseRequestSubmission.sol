@@ -6,11 +6,9 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '../PriceOracle.sol';
 
 contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
-  event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 price, uint256 purchaseDate);
-
   address public request;
   address public submitter;
-  uint256 public price;
+  uint256 public price; // price in USD cents
   string public description;
   uint256 public createdAt;
   string public freeImageId;
@@ -20,9 +18,8 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
 
   PriceOracle internal priceOracle;
 
-  error InsufficientPayment(uint256 required, uint256 provided);
   error AlreadyPurchased(address submission, address sender);
-  error PaymentFailed(address submission, address sender, uint256 value);
+  error InsufficientPayment(uint256 required, uint256 provided);
 
   function initialize(
     address _request,
@@ -47,33 +44,19 @@ contract BaseRequestSubmission is Initializable, ReentrancyGuardUpgradeable {
     priceOracle = PriceOracle(_priceOracle);
   }
 
-  function purchaseSubmission() external payable nonReentrant {
+  function getPriceInWei() public view returns (uint256) {
     uint256 ethPriceInUsd = priceOracle.getLatestETHPrice();
-    require(ethPriceInUsd > 0, 'ETH price is not available in purchaseSubmission');
-    uint256 priceInUsd = price / 1e2; // price is in cents, so we divide by 100 to get USD
-    require(priceInUsd > 0, 'Price in USD is not available');
-    uint256 priceInWei = (priceInUsd * 1e18) / ethPriceInUsd;
+    require(ethPriceInUsd > 0, 'ETH price is not available');
+
+    uint256 priceInWei = (price * 1e18 * 1e8) / (ethPriceInUsd * 100);
+
     require(priceInWei > 0, 'Price in Wei is not available');
+    return priceInWei;
+  }
 
-    // This gives some wiggle room for price fluctuations
-    uint256 minimumAcceptedWei = (priceInWei * 99) / 100;
-    require(minimumAcceptedWei > 0, 'Minimum accepted Wei is not available');
-
-    if (msg.value < minimumAcceptedWei) {
-      revert InsufficientPayment(minimumAcceptedWei, msg.value);
-    }
-    if (submissionPurchasers[msg.sender]) {
-      revert AlreadyPurchased(address(this), msg.sender);
-    }
-
-    (bool success, ) = submitter.call{value: msg.value}('');
-    if (!success) {
-      revert PaymentFailed(address(this), msg.sender, msg.value);
-    }
-
-    submissionPurchasers[msg.sender] = true;
-
-    emit SubmissionPurchased(address(this), msg.sender, msg.value, block.timestamp);
+  function markAsPurchased(address purchaser) external nonReentrant {
+    require(!submissionPurchasers[purchaser], 'Already purchased');
+    submissionPurchasers[purchaser] = true;
   }
 
   function hasPurchased(address _user) external view returns (bool) {

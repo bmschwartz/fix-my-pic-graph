@@ -2,12 +2,13 @@
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '../PictureRequest.sol';
 import '../RequestSubmission.sol';
 import '../RequestComment.sol';
 import '../PriceOracle.sol';
 
-contract BaseFixMyPicFactory is Initializable {
+contract BaseFixMyPicFactory is Initializable, ReentrancyGuardUpgradeable {
   address public priceOracle;
 
   event PictureRequestCreated(
@@ -40,6 +41,8 @@ contract BaseFixMyPicFactory is Initializable {
     address indexed commenter,
     uint256 createdAt
   );
+
+  event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 price, uint256 purchaseDate);
 
   function initialize(address _priceOracle) public initializer {
     priceOracle = _priceOracle;
@@ -105,12 +108,28 @@ contract BaseFixMyPicFactory is Initializable {
   }
 
   function createRequestComment(address _request, string calldata _text) external {
-    // Verify the _request is a PictureRequest
     require(PictureRequest(_request).isPictureRequest(), 'PictureRequest does not exist');
 
     RequestComment comment = new RequestComment();
     comment.initialize(_request, _text, msg.sender);
 
     emit RequestCommentCreated(address(comment), _request, _text, msg.sender, block.timestamp);
+  }
+
+  function purchaseSubmission(address _submission) external payable nonReentrant {
+    require(_submission != address(0), 'Invalid submission address');
+
+    RequestSubmission requestSubmission = RequestSubmission(_submission);
+
+    uint256 priceInWei = requestSubmission.getPriceInWei();
+
+    require(msg.value >= priceInWei, 'Insufficient payment');
+
+    requestSubmission.markAsPurchased(msg.sender);
+
+    (bool success, ) = requestSubmission.submitter().call{value: msg.value}('');
+    require(success, 'Payment failed');
+
+    emit SubmissionPurchased(_submission, msg.sender, msg.value, block.timestamp);
   }
 }

@@ -8,7 +8,7 @@ export const getEthPrice = async (): Promise<bigint> => {
   while (!ethPrice) {
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/prices`);
-      ethPrice = data.ethPrice;
+      ethPrice = BigInt(data.ethPrice);
     } catch (e: any) {
       console.error(e);
       throw new Error('DEBUG Failed to get ETH price', e);

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 import { useContractService } from '@/hooks/useContractService';
+import { useImageStore } from '@/hooks/useImageStore';
 import { useWallet } from '@/hooks/useWallet';
 import { RequestSubmission } from '@/types/submission';
 import { getImageUrl } from '@/utils/getImage';
@@ -16,6 +17,7 @@ interface SubmissionListItemProps {
 
 const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) => {
   const { contractService } = useContractService();
+  const { getDecryptedImageUrl } = useImageStore();
   const { selectedWallet, selectedAccount } = useWallet();
 
   const [loading, setLoading] = useState(false);
@@ -68,11 +70,19 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) =
             setLoading(true);
             setIsOverlayOpen(false);
             setLoadingLabel('Purchasing image...');
+
             await contractService.purchaseSubmission({
               account: selectedAccount,
               wallet: selectedWallet,
               address: submission.id,
             });
+
+            const decryptedImageUrl = await getDecryptedImageUrl(submission);
+            window.open(decryptedImageUrl, '_blank');
+
+            setLoadingLabel('');
+            setIsOverlayOpen(false);
+            setLoading(false);
           }}
         />
       )}

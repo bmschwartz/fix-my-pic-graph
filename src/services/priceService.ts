@@ -1,6 +1,9 @@
 import { ethers } from 'ethers';
 
 import PriceOracleSchema from '@/public/artifacts/PriceOracle.json';
+import { getLogger } from '@/utils/logging';
+
+const logger = getLogger('priceService');
 
 const PRICE_ORACLE_ADDRESS = process.env.NEXT_PUBLIC_PRICE_ORACLE_ADDRESS;
 if (!PRICE_ORACLE_ADDRESS) {
@@ -15,11 +18,11 @@ let _ethPrice: bigint = 0n;
 
 async function fetchEthUsdPrice() {
   try {
-    _ethPrice = await priceOracleContract.latestRoundData();
+    _ethPrice = await priceOracleContract.getLatestETHPrice();
 
-    console.log('DEBUG ETH/USD Price:', _ethPrice.toString());
+    logger.debug('ETH/USD Price:', _ethPrice.toString());
   } catch (error) {
-    console.error('Error fetching ETH/USD price:', error);
+    logger.error('Error fetching ETH/USD price:', error);
   }
 }
 
@@ -28,4 +31,4 @@ export function getEthPrice() {
 }
 
 fetchEthUsdPrice();
-setInterval(fetchEthUsdPrice, 5 * 1000);
+setInterval(fetchEthUsdPrice, 60 * 1000);
