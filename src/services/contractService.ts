@@ -5,7 +5,6 @@ import FixMyPicFactorySchema from '@/public/artifacts/FixMyPicFactory.json';
 import RequestSubmissionSchema from '@/public/artifacts/RequestSubmission.json';
 import { EIP6963ProviderDetail } from '@/types/eip6963';
 import { convertUsdCentsToWei, getEthPrice } from '@/utils/currency';
-import { getLogger } from '@/utils/logging';
 
 interface WalletParams {
   account: string;
@@ -46,18 +45,14 @@ export interface FixMyPicContractService {
   purchaseSubmission(params: PurchaseSubmissionParams): Promise<boolean>;
 }
 
-const logger = getLogger('contractService');
-
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || '';
 const FIX_MY_PIC_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_FIX_MY_PIC_FACTORY_ADDRESS || '';
 
 if (!RPC_URL) {
-  logger.error('No RPC URL provided');
-  process.exit(1);
+  process.exit('No RPC URL provided');
 }
 if (!FIX_MY_PIC_FACTORY_ADDRESS) {
-  logger.error('No picture factory address provided');
-  process.exit(1);
+  process.exit('No picture factory address provided');
 }
 
 async function createFixMyPicContractService(factoryAddress: string): Promise<FixMyPicContractService> {
@@ -75,46 +70,36 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
     wallet,
     account,
   }: CreatePictureRequestParams): Promise<string | null> => {
-    logger.debug('Connecting to factory contract', factoryAddress);
     const fixMyPicFactory = new Contract(factoryAddress, FixMyPicFactorySchema.abi, await _getSigner(wallet, account));
 
-    logger.debug('creating picture request', title, description, imageId, budget, expiresAt || 1822865505);
-    try {
-      const tx = await fixMyPicFactory.createPictureRequest(
-        title,
-        description,
-        imageId,
-        budget * 100, // convert to cents
-        expiresAt || 1822865505
-      );
-      const receipt: ContractTransactionReceipt = await tx.wait();
+    const tx = await fixMyPicFactory.createPictureRequest(
+      title,
+      description,
+      imageId,
+      budget * 100, // convert to cents
+      expiresAt || 1822865505
+    );
+    const receipt: ContractTransactionReceipt = await tx.wait();
 
-      if (receipt.status !== 1) {
-        throw new Error('Failed to create image request');
-      }
-
-      const event = receipt.logs.find(
-        (log) =>
-          log.address === factoryAddress &&
-          log.topics[0] ===
-            ethers.id('PictureRequestCreated(address,string,string,string,uint256,address,uint256,uint256)')
-      );
-
-      if (!event) {
-        logger.debug('no event found', receipt.logs);
-        return null;
-      }
-
-      const decodedEvent = fixMyPicFactory.interface.parseLog(event);
-      logger.debug('decoded event', decodedEvent);
-      const pictureRequestAddress: string | null = decodedEvent?.args.request;
-      logger.debug('picture request address', pictureRequestAddress);
-
-      return pictureRequestAddress;
-    } catch (error) {
-      logger.debug('Unable to create the image request:', error, typeof error);
-      throw error;
+    if (receipt.status !== 1) {
+      throw new Error('Failed to create image request');
     }
+
+    const event = receipt.logs.find(
+      (log) =>
+        log.address === factoryAddress &&
+        log.topics[0] ===
+          ethers.id('PictureRequestCreated(address,string,string,string,uint256,address,uint256,uint256)')
+    );
+
+    if (!event) {
+      return null;
+    }
+
+    const decodedEvent = fixMyPicFactory.interface.parseLog(event);
+    const pictureRequestAddress: string | null = decodedEvent?.args.request;
+
+    return pictureRequestAddress;
   };
 
   const createSubmission = async ({
@@ -127,32 +112,23 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
     encryptedPictureId,
     watermarkedPictureId,
   }: CreateSubmissionsParams): Promise<boolean> => {
-    try {
-      const fixMyPicFactory = new Contract(
-        factoryAddress,
-        FixMyPicFactorySchema.abi,
-        await _getSigner(wallet, account)
-      );
+    const fixMyPicFactory = new Contract(factoryAddress, FixMyPicFactorySchema.abi, await _getSigner(wallet, account));
 
-      const tx = await fixMyPicFactory.createRequestSubmission(
-        requestAddress,
-        description,
-        (price || 0) * 100, // convert to cents
-        freePictureId || '',
-        watermarkedPictureId || '',
-        encryptedPictureId || ''
-      );
-      const receipt: ContractTransactionReceipt = await tx.wait();
+    const tx = await fixMyPicFactory.createRequestSubmission(
+      requestAddress,
+      description,
+      (price || 0) * 100, // convert to cents
+      freePictureId || '',
+      watermarkedPictureId || '',
+      encryptedPictureId || ''
+    );
+    const receipt: ContractTransactionReceipt = await tx.wait();
 
-      if (receipt.status !== 1 || !receipt.contractAddress) {
-        throw new Error(`Failed to create submission on picture request ${requestAddress}`);
-      }
-
-      return true;
-    } catch (error) {
-      logger.error('Unable to create the submission:', error);
-      throw error;
+    if (receipt.status !== 1 || !receipt.contractAddress) {
+      throw new Error(`Failed to create submission on picture request ${requestAddress}`);
     }
+
+    return true;
   };
 
   const purchaseSubmission = async ({
@@ -172,13 +148,8 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
     const fixMyPicFactory = new Contract(factoryAddress, FixMyPicFactorySchema.abi, await _getSigner(wallet, account));
 
     let receipt: ContractTransactionReceipt;
-    try {
-      const tx = await fixMyPicFactory.purchaseSubmission(submissionAddress, { value: priceInWei });
-      receipt = await tx.wait();
-    } catch (error: any) {
-      logger.error('Unable to purchase the submission:', error);
-      throw error;
-    }
+    const tx = await fixMyPicFactory.purchaseSubmission(submissionAddress, { value: priceInWei });
+    receipt = await tx.wait();
 
     const event = receipt.logs
       .map((log) => fixMyPicFactory.interface.parseLog(log))

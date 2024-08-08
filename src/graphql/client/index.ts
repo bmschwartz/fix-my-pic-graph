@@ -1348,8 +1348,8 @@ const merger = new(BareMerger as any)({
         store: rootStore.child('bareMerger')
       })
 const documentHashMap = {
-        "8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": GetPictureRequestsDocument,
-"7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": GetPictureRequestDocument
+        "7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": GetPictureRequestDocument,
+"8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": GetPictureRequestsDocument
       }
 additionalEnvelopPlugins.push(usePersistedOperations({
         getPersistedOperation(key) {
@@ -1371,19 +1371,19 @@ additionalEnvelopPlugins.push(usePersistedOperations({
     get documents() {
       return [
       {
-        document: GetPictureRequestsDocument,
-        get rawSDL() {
-          return printWithCache(GetPictureRequestsDocument);
-        },
-        location: 'GetPictureRequestsDocument.graphql',
-        sha256Hash: '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108'
-      },{
         document: GetPictureRequestDocument,
         get rawSDL() {
           return printWithCache(GetPictureRequestDocument);
         },
         location: 'GetPictureRequestDocument.graphql',
         sha256Hash: '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac'
+      },{
+        document: GetPictureRequestsDocument,
+        get rawSDL() {
+          return printWithCache(GetPictureRequestsDocument);
+        },
+        location: 'GetPictureRequestsDocument.graphql',
+        sha256Hash: '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108'
       }
     ];
     },
@@ -1442,10 +1442,15 @@ export type CommentFragmentFragment = Pick<RequestComment, 'id' | 'commenter' | 
 
 export type PictureRequestFragmentFragment = (
   Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
-  & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>> }
+  & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<(
+    Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>
+    & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
+  )> }
 );
 
-export type SubmissionFragmentFragment = Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>;
+export type RequestSubmissionFragmentFragment = Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>;
+
+export type SubmissionPurchaseFragmentFragment = { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> };
 
 export type GetPictureRequestQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1454,7 +1459,10 @@ export type GetPictureRequestQueryVariables = Exact<{
 
 export type GetPictureRequestQuery = { pictureRequest?: Maybe<(
     Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
-    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>> }
+    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<(
+      Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>
+      & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
+    )> }
   )> };
 
 export type GetPictureRequestsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1462,7 +1470,10 @@ export type GetPictureRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetPictureRequestsQuery = { pictureRequests: Array<(
     Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
-    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>> }
+    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<(
+      Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>
+      & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
+    )> }
   )> };
 
 export const CommentFragmentFragmentDoc = gql`
@@ -1473,8 +1484,8 @@ export const CommentFragmentFragmentDoc = gql`
   createdAt
 }
     ` as unknown as DocumentNode<CommentFragmentFragment, unknown>;
-export const SubmissionFragmentFragmentDoc = gql`
-    fragment SubmissionFragment on RequestSubmission {
+export const RequestSubmissionFragmentFragmentDoc = gql`
+    fragment RequestSubmissionFragment on RequestSubmission {
   id
   submitter
   description
@@ -1484,7 +1495,16 @@ export const SubmissionFragmentFragmentDoc = gql`
   watermarkedImageId
   encryptedImageId
 }
-    ` as unknown as DocumentNode<SubmissionFragmentFragment, unknown>;
+    ` as unknown as DocumentNode<RequestSubmissionFragmentFragment, unknown>;
+export const SubmissionPurchaseFragmentFragmentDoc = gql`
+    fragment SubmissionPurchaseFragment on RequestSubmission {
+  purchases {
+    id
+    purchaser
+    purchaseDate
+  }
+}
+    ` as unknown as DocumentNode<SubmissionPurchaseFragmentFragment, unknown>;
 export const PictureRequestFragmentFragmentDoc = gql`
     fragment PictureRequestFragment on PictureRequest {
   id
@@ -1498,11 +1518,13 @@ export const PictureRequestFragmentFragmentDoc = gql`
     ...CommentFragment
   }
   submissions {
-    ...SubmissionFragment
+    ...RequestSubmissionFragment
+    ...SubmissionPurchaseFragment
   }
 }
     ${CommentFragmentFragmentDoc}
-${SubmissionFragmentFragmentDoc}` as unknown as DocumentNode<PictureRequestFragmentFragment, unknown>;
+${RequestSubmissionFragmentFragmentDoc}
+${SubmissionPurchaseFragmentFragmentDoc}` as unknown as DocumentNode<PictureRequestFragmentFragment, unknown>;
 export const GetPictureRequestDocument = gql`
     query GetPictureRequest($id: ID!) {
   pictureRequest(id: $id) {

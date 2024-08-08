@@ -61,9 +61,15 @@ export const useImageStore = () => {
     }
   };
 
-  const getFreeImageUrl = (submission: RequestSubmission): string => {
-    const pictureId = submission.freePictureId || (submission.watermarkedPictureId as string);
-    return `${IMAGE_URL_ROOT}/${pictureId}`;
+  const getImageUrlToShow = (submission: RequestSubmission): Promise<string> => {
+    const purchased = submission.purchases.some((purchase) => purchase.buyer === account);
+
+    if (submission.price === 0 || !purchased) {
+      const pictureId = submission.freePictureId || (submission.watermarkedPictureId as string);
+      return Promise.resolve(`${IMAGE_URL_ROOT}/${pictureId}`);
+    }
+
+    return getDecryptedImageUrl(submission);
   };
 
   const encryptPictureId = async (pictureId: string): Promise<string> => {
@@ -101,5 +107,5 @@ export const useImageStore = () => {
     }
   };
 
-  return { uploadImage, getFreeImageUrl, getDecryptedImageUrl, encryptPictureId };
+  return { uploadImage, getImageUrlToShow, getDecryptedImageUrl, encryptPictureId };
 };

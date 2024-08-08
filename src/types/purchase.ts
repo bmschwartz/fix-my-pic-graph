@@ -1,7 +1,7 @@
 export interface SubmissionPurchase {
   id: string;
   buyer: string;
-  price: string;
+  price: number;
   submissionAddress: string;
 }
 

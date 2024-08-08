@@ -44,6 +44,9 @@ importers:
       framer-motion:
         specifier: 11.3.19
         version: 11.3.19(@emotion/is-prop-valid@1.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      lodash:
+        specifier: 4.17.21
+        version: 4.17.21
       mui-file-input:
         specifier: 4.0.6
         version: 4.0.6(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@mui/material@5.16.5(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -117,6 +120,9 @@ importers:
       '@types/klaw':
         specifier: 3.0.6
         version: 3.0.6
+      '@types/lodash':
+        specifier: 4.17.7
+        version: 4.17.7
       '@types/mocha':
         specifier: 10.0.7
         version: 10.0.7
@@ -2164,6 +2170,9 @@ packages:
 
   '@types/levelup@4.3.3':
     resolution: {integrity: sha512-K+OTIjJcZHVlZQN1HmU64VtrC0jC3dXWQozuEIR9zVvltIk90zaGPM2AgT+fIkChpzHhFE3YnvFLCbLtzAmexA==}
+
+  '@types/lodash@4.17.7':
+    resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
   '@types/lru-cache@5.1.1':
     resolution: {integrity: sha512-ssE3Vlrys7sdIzs5LOxCzTVMsU7i9oa/IaW92wF32JFb3CVczqOkru2xspuKczHEbG3nvmPY7IFqVmGGHdNbYw==}
@@ -6797,9 +6806,9 @@ packages:
     resolution: {integrity: sha512-dvdQgNDNJo+8B2uBQoqdb11eUCE1JQXhvjC/CZtgvZseVd5TYMXnq0+vuUemXbd/Se29cTaUuPX3YIc2xgbvIg==}
     engines: {node: '>=8'}
 
-  uWebSockets.js@https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8fa05571bf6ea95be8966ad313d9d39453e381ae:
-    resolution: {tarball: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8fa05571bf6ea95be8966ad313d9d39453e381ae}
-    version: 20.44.0
+  uWebSockets.js@https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/6f4b450fc642abba540535f0755c990b42a16026:
+    resolution: {tarball: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/6f4b450fc642abba540535f0755c990b42a16026}
+    version: 20.47.0
 
   ua-parser-js@1.0.38:
     resolution: {integrity: sha512-Aq5ppTOfvrCMgAPneW1HfWj66Xi7XL+/mIy996R1/CLS/rcyJQm6QZdsKrUeivDFQ+Oc9Wyuwor8Ze8peEoUoQ==}
@@ -8747,7 +8756,7 @@ snapshots:
       yargs: 17.7.2
     optionalDependencies:
       node-libcurl: 4.0.0(encoding@0.1.13)
-      uWebSockets.js: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8fa05571bf6ea95be8966ad313d9d39453e381ae
+      uWebSockets.js: https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/6f4b450fc642abba540535f0755c990b42a16026
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -10263,6 +10272,8 @@ snapshots:
       '@types/abstract-leveldown': 7.2.5
       '@types/level-errors': 3.0.2
       '@types/node': 20.14.11
+
+  '@types/lodash@4.17.7': {}
 
   '@types/lru-cache@5.1.1': {}
 
@@ -15872,7 +15883,7 @@ snapshots:
 
   typical@5.2.0: {}
 
-  uWebSockets.js@https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8fa05571bf6ea95be8966ad313d9d39453e381ae:
+  uWebSockets.js@https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/6f4b450fc642abba540535f0755c990b42a16026:
     optional: true
 
   ua-parser-js@1.0.38: {}

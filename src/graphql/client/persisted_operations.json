@@ -1,7 +1,8 @@
 {
   "393e4b22f0aaaf4f83d45e42f3076066e3cad076e096ccf768f09421ad65a55a": "fragment CommentFragment on RequestComment {\n  id\n  commenter\n  text\n  createdAt\n}",
-  "ac49f5880572471998936a2f77f08da274cd74c671f397aee459f289945ad359": "fragment PictureRequestFragment on PictureRequest {\n  id\n  title\n  description\n  imageId\n  budget\n  creator\n  createdAt\n  comments {\n    ...CommentFragment\n  }\n  submissions {\n    ...SubmissionFragment\n  }\n}",
-  "5227dfb8f1a2ba7b1daf9acc0b6b5b560911fd8925dc6d315d86516639df2de2": "fragment SubmissionFragment on RequestSubmission {\n  id\n  submitter\n  description\n  price\n  createdAt\n  freeImageId\n  watermarkedImageId\n  encryptedImageId\n}",
+  "ad6840accfb835fd1a587895ef9496445cd3c842eb1fc2f03a43027570b4adc1": "fragment PictureRequestFragment on PictureRequest {\n  id\n  title\n  description\n  imageId\n  budget\n  creator\n  createdAt\n  comments {\n    ...CommentFragment\n  }\n  submissions {\n    ...RequestSubmissionFragment\n    ...SubmissionPurchaseFragment\n  }\n}",
+  "a25aa8d7866d6a2c7e2b1cdb9e3b427e52c4d2d9bd835174d7b5cab06cfaaf2a": "fragment RequestSubmissionFragment on RequestSubmission {\n  id\n  submitter\n  description\n  price\n  createdAt\n  freeImageId\n  watermarkedImageId\n  encryptedImageId\n}",
+  "6400f7bb7f7af1c10993d7a69f233c864fb1db8f51c982f64de560560f31815d": "fragment SubmissionPurchaseFragment on RequestSubmission {\n  purchases {\n    id\n    purchaser\n    purchaseDate\n  }\n}",
   "7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": "query GetPictureRequest($id: ID!) {\n  pictureRequest(id: $id) {\n    ...PictureRequestFragment\n  }\n}",
   "8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": "query GetPictureRequests {\n  pictureRequests {\n    ...PictureRequestFragment\n  }\n}"
 }

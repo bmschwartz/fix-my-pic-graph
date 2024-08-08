@@ -1,4 +1,4 @@
-fragment SubmissionFragment on RequestSubmission {
+fragment RequestSubmissionFragment on RequestSubmission {
   id
   submitter
   description

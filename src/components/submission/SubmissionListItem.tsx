@@ -6,16 +6,16 @@ import { useContractService } from '@/hooks/useContractService';
 import { useImageStore } from '@/hooks/useImageStore';
 import { useWallet } from '@/hooks/useWallet';
 import { RequestSubmission } from '@/types/submission';
-import { getImageUrl } from '@/utils/getImage';
 import FMPTypography from '../common/FMPTypography';
 import ImageOverlay from '../common/ImageOverlay';
 import LoadingOverlay from '../common/LoadingOverlay';
 
 interface SubmissionListItemProps {
   submission: RequestSubmission;
+  imageUrlToShow: string;
 }
 
-const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) => {
+const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, imageUrlToShow }) => {
   const { contractService } = useContractService();
   const { getDecryptedImageUrl } = useImageStore();
   const { selectedWallet, selectedAccount } = useWallet();
@@ -24,6 +24,7 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) =
   const [loadingLabel, setLoadingLabel] = useState('');
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const isFree = submission.price === 0;
+  const purchasedSubmission = submission.purchases.find((purchase) => purchase.buyer === selectedAccount);
 
   const handleImageClick = () => {
     setIsOverlayOpen(true);
@@ -37,7 +38,7 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) =
     <>
       <Box sx={{ cursor: 'pointer' }}>
         <Image
-          src={getImageUrl(submission.watermarkedPictureId || submission.freePictureId!)}
+          src={imageUrlToShow}
           alt="Submission"
           layout="responsive"
           width={150}
@@ -56,13 +57,14 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) =
       </Box>
       {isOverlayOpen && (
         <ImageOverlay
-          imageUrl={getImageUrl(submission.watermarkedPictureId || submission.freePictureId!)}
+          imageUrl={imageUrlToShow}
           onClose={handleOverlayClose}
           description={submission.description}
-          price={submission.price}
+          price={purchasedSubmission ? 0 : submission.price}
           onDownload={async () => {
-            if (!submission.price) {
-              window.open(getImageUrl(submission.freePictureId!), '_blank');
+            if (!submission.price || purchasedSubmission) {
+              window.open(imageUrlToShow, '_blank');
+              return;
             }
 
             if (!selectedWallet || !selectedAccount) return;
@@ -71,18 +73,22 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission }) =
             setIsOverlayOpen(false);
             setLoadingLabel('Purchasing image...');
 
-            await contractService.purchaseSubmission({
-              account: selectedAccount,
-              wallet: selectedWallet,
-              address: submission.id,
-            });
+            try {
+              await contractService.purchaseSubmission({
+                account: selectedAccount,
+                wallet: selectedWallet,
+                address: submission.id,
+              });
 
-            const decryptedImageUrl = await getDecryptedImageUrl(submission);
-            window.open(decryptedImageUrl, '_blank');
-
-            setLoadingLabel('');
-            setIsOverlayOpen(false);
-            setLoading(false);
+              const decryptedImageUrl = await getDecryptedImageUrl(submission);
+              window.open(decryptedImageUrl, '_blank');
+            } catch (error) {
+              console.error('Error purchasing image:', error);
+            } finally {
+              setLoadingLabel('');
+              setIsOverlayOpen(false);
+              setLoading(false);
+            }
           }}
         />
       )}

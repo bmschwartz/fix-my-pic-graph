@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 import { Request } from '@/types/request';
 import TabButton from '../common/TabButton';
-import RequestDetailCommentSection from './RequestDetailCommentTab';
-import RequestDetailSubmissionSection from './RequestDetailSubmissionTab';
+import RequestDetailCommentTab from './RequestDetailCommentTab';
+import RequestDetailSubmissionTab from './RequestDetailSubmissionTab';
 
 interface RequestDetailTabSectionProps {
   request: Request;
@@ -39,8 +39,8 @@ const RequestDetailTabSection: React.FC<RequestDetailTabSectionProps> = ({ reque
         />
       </Box>
       <Divider sx={{ my: 3 }} />
-      {selectedTab === RequestDetailTab.Submissions && <RequestDetailSubmissionSection request={request} />}
-      {selectedTab === RequestDetailTab.Comments && <RequestDetailCommentSection request={request} />}
+      {selectedTab === RequestDetailTab.Submissions && <RequestDetailSubmissionTab request={request} />}
+      {selectedTab === RequestDetailTab.Comments && <RequestDetailCommentTab request={request} />}
     </Box>
   );
 };

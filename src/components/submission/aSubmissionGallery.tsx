@@ -6,26 +6,31 @@ import React, { useEffect, useRef } from 'react';
 import { FMPButton, FMPTypography } from '@/components';
 import { useImageStore } from '@/hooks/useImageStore';
 import { RequestSubmission } from '@/types/submission';
+import LoadingOverlay from '../common/LoadingOverlay';
 
 interface SubmissionGalleryProps {
-  submissions: RequestSubmission[];
+  submission: RequestSubmission;
   currentIndex: number;
   onClose: () => void;
   onNext: () => void;
   onPrev: () => void;
 }
 
-const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
-  submissions,
-  currentIndex,
-  onClose,
-  onNext,
-  onPrev,
-}) => {
-  const { getFreeImageUrl } = useImageStore();
-  const submission = submissions[currentIndex];
-  const imageUrl = getFreeImageUrl(submission);
+const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({ submission, currentIndex, onClose, onNext, onPrev }) => {
+  const [imageUrl, setImageUrl] = React.useState('');
+
+  const { getImageUrlToShow } = useImageStore();
   const isFree = submission.price === 0;
+
+  useEffect(() => {
+    const fetchImageUrl = async () => {
+      setImageUrl('');
+      const url = await getImageUrlToShow(submission);
+      setImageUrl(url);
+    };
+
+    fetchImageUrl();
+  }, [submission, getImageUrlToShow]);
 
   const handleDownload = () => {
     // Handle download logic here
@@ -127,7 +132,8 @@ const SubmissionGallery: React.FC<SubmissionGalleryProps> = ({
               height: '100%',
             }}
           >
-            <Image src={imageUrl} alt="Overlay Image" layout="fill" objectFit="contain" ref={imageRef} />
+            <LoadingOverlay loading={!imageUrl} />
+            {imageUrl && <Image src={imageUrl} alt="Overlay Image" layout="fill" objectFit="contain" ref={imageRef} />}
           </Box>
           <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <FMPTypography variant="h6" sx={{ fontWeight: 600 }}>
