@@ -1348,8 +1348,8 @@ const merger = new(BareMerger as any)({
         store: rootStore.child('bareMerger')
       })
 const documentHashMap = {
-        "7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": GetPictureRequestDocument,
-"8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": GetPictureRequestsDocument
+        "8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": GetPictureRequestsDocument,
+"7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": GetPictureRequestDocument
       }
 additionalEnvelopPlugins.push(usePersistedOperations({
         getPersistedOperation(key) {
@@ -1371,19 +1371,19 @@ additionalEnvelopPlugins.push(usePersistedOperations({
     get documents() {
       return [
       {
-        document: GetPictureRequestDocument,
-        get rawSDL() {
-          return printWithCache(GetPictureRequestDocument);
-        },
-        location: 'GetPictureRequestDocument.graphql',
-        sha256Hash: '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac'
-      },{
         document: GetPictureRequestsDocument,
         get rawSDL() {
           return printWithCache(GetPictureRequestsDocument);
         },
         location: 'GetPictureRequestsDocument.graphql',
         sha256Hash: '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108'
+      },{
+        document: GetPictureRequestDocument,
+        get rawSDL() {
+          return printWithCache(GetPictureRequestDocument);
+        },
+        location: 'GetPictureRequestDocument.graphql',
+        sha256Hash: '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac'
       }
     ];
     },
