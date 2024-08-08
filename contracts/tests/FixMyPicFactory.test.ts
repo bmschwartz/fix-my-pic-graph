@@ -115,13 +115,11 @@ describe('FixMyPicFactory', function () {
   describe('Purchase Request Submission', function () {
     it('should purchase a request submission', async function () {
       const priceInCents = await requestSubmission.price();
-
       const priceInWei = convertUsdCentsToWei(priceInCents, ethToUsd);
-      logger.info('Price in cents:', priceInCents, ethToUsd, priceInWei, ethers.formatUnits(priceInWei, 'ether'));
 
       try {
         const tx = await fixMyPicFactory.purchaseSubmission(await requestSubmission.getAddress(), {
-          value: priceInWei / 2n,
+          value: priceInWei,
         });
         const receipt: ContractTransactionReceipt = await tx.wait();
 
