@@ -23,8 +23,8 @@ export const getEthPrice = async (): Promise<bigint> => {
 };
 
 export const convertUsdCentsToWei = (priceInCents: bigint, ethUsdRate: bigint): bigint => {
-  // Calculate the amount of cents in Wei directly to avoid precision loss
-  const priceInWei = (priceInCents * 10n ** 18n) / ethUsdRate;
+  // Calculate the amount of USD in cents to Wei
+  const priceInWei = (priceInCents * 10n ** 26n) / ethUsdRate; // 10^18 for wei and 10^8 for USD rate
 
   return priceInWei;
 };

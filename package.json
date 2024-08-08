@@ -21,7 +21,7 @@
     "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
     "postinstall": "husky",
     "preinstall": "npx only-allow pnpm",
-    "test": "CHAINSTACK_API_ENDPOINT=https://ethereum-mainnet.core.chainstack.com/0c351f5010d5522747b58ba4c1ccd485 jest --config jest.config.ts"
+    "test": "jest --config jest.config.ts"
   },
   "lint-staged": {
     "./src/**/*.{ts,js,jsx,tsx}": [

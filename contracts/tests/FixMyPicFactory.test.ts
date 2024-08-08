@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { Contract, ContractTransactionReceipt, ethers } from 'ethers';
 
-import RequestSubmissionSchema from '../../public/artifacts/RequestSubmission.json';
 import { convertUsdCentsToWei } from '../../src/utils/currency';
+import { getLogger } from '../../src/utils/logging';
 import {
   _createPictureRequest,
   _createRequestSubmission,
@@ -13,6 +13,8 @@ import {
 
 // Set a longer timeout for this test file
 jest.setTimeout(300000); // 300 seconds or 5 minutes
+
+const logger = getLogger('FixMyPicFactory.test.ts');
 
 interface Account {
   address: string;
@@ -114,35 +116,28 @@ describe('FixMyPicFactory', function () {
     it('should purchase a request submission', async function () {
       const priceInCents = await requestSubmission.price();
 
-      console.log('DEBUG inputs:', priceInCents, ethToUsd);
-
       const priceInWei = convertUsdCentsToWei(priceInCents, ethToUsd);
-
-      const signer = await _getSigner(ACCOUNTS.THREE);
-
-      const submissionContract = new ethers.Contract(
-        await requestSubmission.getAddress(),
-        RequestSubmissionSchema.abi,
-        signer
-      );
+      logger.info('Price in cents:', priceInCents, ethToUsd, priceInWei, ethers.formatUnits(priceInWei, 'ether'));
 
       try {
-        console.log('DEBUG price', priceInCents, priceInWei);
-        const tx = await submissionContract.purchaseSubmission({ value: priceInWei });
-        console.log('DEBUG tx:', tx);
+        const tx = await fixMyPicFactory.purchaseSubmission(await requestSubmission.getAddress(), {
+          value: priceInWei / 2n,
+        });
         const receipt: ContractTransactionReceipt = await tx.wait();
-        console.log('DEBUG receipt:', receipt);
 
         if (receipt.status !== 1) {
-          console.error('Transaction failed with status:', receipt.status);
-          console.error('Transaction receipt:', receipt);
+          logger.error('Transaction failed with status:', receipt.status);
+          logger.error('Transaction receipt:', receipt);
           throw new Error('Failed to purchase request submission');
         }
 
-        const hasPurchased = await requestSubmission.hasPurchased(await signer.getAddress());
-        expect(hasPurchased).to.be.true;
+        const event = receipt.logs
+          .map((log) => fixMyPicFactory.interface.parseLog(log))
+          .find((log) => log && log.name === 'SubmissionPurchased');
+
+        expect(event).to.not.be.undefined;
       } catch (error) {
-        console.error('Error during purchase submission:', error);
+        logger.error('Error during purchase submission:', error);
         throw error;
       }
     });
@@ -160,11 +155,11 @@ describe('FixMyPicFactory', function () {
   //     throw new Error('Failed to create request comment');
   //   }
 
-  //   const event = receipt.logs.find(
-  //     (log: EventLog | Log) =>
-  //       log.address === fixMyPicFactoryAddress &&
-  //       log.topics[0] === ethers.id('RequestCommentCreated(address,address,string,address,uint256)')
-  //   );
+  // const event = receipt.logs.find(
+  //   (log: EventLog | Log) =>
+  //     log.address === fixMyPicFactoryAddress &&
+  //     log.topics[0] === ethers.id('RequestCommentCreated(address,address,string,address,uint256)')
+  // );
 
   //   if (!event) {
   //     throw new Error('RequestCommentCreated event not found');

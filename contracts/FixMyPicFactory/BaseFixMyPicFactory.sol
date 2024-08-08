@@ -9,8 +9,6 @@ import '../RequestComment.sol';
 import '../PriceOracle.sol';
 
 contract BaseFixMyPicFactory is Initializable, ReentrancyGuardUpgradeable {
-  address public priceOracle;
-
   event PictureRequestCreated(
     address indexed request,
     string title,
@@ -43,6 +41,10 @@ contract BaseFixMyPicFactory is Initializable, ReentrancyGuardUpgradeable {
   );
 
   event SubmissionPurchased(address indexed submission, address indexed purchaser, uint256 price, uint256 purchaseDate);
+
+  error InsufficientPayment(uint256 required, uint256 provided);
+
+  address public priceOracle;
 
   function initialize(address _priceOracle) public initializer {
     priceOracle = _priceOracle;
@@ -123,7 +125,9 @@ contract BaseFixMyPicFactory is Initializable, ReentrancyGuardUpgradeable {
 
     uint256 priceInWei = requestSubmission.getPriceInWei();
 
-    require(msg.value >= priceInWei, 'Insufficient payment');
+    if (msg.value < priceInWei) {
+      revert InsufficientPayment(priceInWei, msg.value);
+    }
 
     requestSubmission.markAsPurchased(msg.sender);
 
