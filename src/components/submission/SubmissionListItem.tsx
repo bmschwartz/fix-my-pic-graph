@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import { useContractService } from '@/hooks/useContractService';
@@ -9,6 +10,7 @@ import { RequestSubmission } from '@/types/submission';
 import FMPTypography from '../common/FMPTypography';
 import ImageOverlay from '../common/ImageOverlay';
 import LoadingOverlay from '../common/LoadingOverlay';
+import ConnectWalletDialog from '../wallet/ConnectWalletDialog';
 
 interface SubmissionListItemProps {
   submission: RequestSubmission;
@@ -16,10 +18,13 @@ interface SubmissionListItemProps {
 }
 
 const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, imageUrlToShow }) => {
+  const router = useRouter();
+
   const { contractService } = useContractService();
   const { getDecryptedImageUrl } = useImageStore();
   const { selectedWallet, selectedAccount } = useWallet();
 
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingLabel, setLoadingLabel] = useState('');
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
@@ -32,6 +37,14 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, ima
 
   const handleOverlayClose = () => {
     setIsOverlayOpen(false);
+  };
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -67,21 +80,24 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, ima
               return;
             }
 
-            if (!selectedWallet || !selectedAccount) return;
+            if (!selectedWallet || !selectedAccount) {
+              setDialogOpen(true);
+              return;
+            }
 
             setLoading(true);
             setIsOverlayOpen(false);
             setLoadingLabel('Purchasing image...');
 
             try {
+              console.log('Purchasing image:', submission.id);
               await contractService.purchaseSubmission({
                 account: selectedAccount,
                 wallet: selectedWallet,
                 address: submission.id,
               });
 
-              const decryptedImageUrl = await getDecryptedImageUrl(submission);
-              window.open(decryptedImageUrl, '_blank');
+              router.reload();
             } catch (error) {
               console.error('Error purchasing image:', error);
             } finally {
@@ -93,6 +109,7 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, ima
         />
       )}
       <LoadingOverlay loading={loading} label={loadingLabel} />
+      <ConnectWalletDialog open={dialogOpen} onClose={handleCloseDialog} />
     </>
   );
 };

@@ -74,7 +74,15 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
           </Box>
         </Box>
       </Box>
-      {isOverlayOpen && <ImageOverlay imageUrl={getImageUrl(request.imageId)} onClose={handleOverlayClose} />}
+      {isOverlayOpen && (
+        <ImageOverlay
+          imageUrl={getImageUrl(request.imageId)}
+          onClose={handleOverlayClose}
+          onDownload={() => {
+            window.open(getImageUrl(request.imageId), '_blank');
+          }}
+        />
+      )}
     </>
   );
 };

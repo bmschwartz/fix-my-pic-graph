@@ -9,12 +9,13 @@ interface ImageOverlayProps {
   price?: number;
   imageUrl: string;
   description?: string;
+  canBuy?: boolean;
 
   onClose: () => void;
   onDownload?: () => void;
 }
 
-const ImageOverlay: React.FC<ImageOverlayProps> = ({ imageUrl, onClose, onDownload, description, price }) => {
+const ImageOverlay: React.FC<ImageOverlayProps> = ({ imageUrl, onClose, onDownload, canBuy, description, price }) => {
   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if ((event.target as HTMLElement).dataset.overlay) {
       onClose();
