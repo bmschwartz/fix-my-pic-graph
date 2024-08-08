@@ -13,6 +13,7 @@ interface RequestDetailInfoSectionProps {
 
 const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ request }) => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const imageUrl = getImageUrl(request.imageId);
 
   const handleImageClick = () => {
     setIsOverlayOpen(true);
@@ -46,7 +47,7 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
               minHeight: 300,
             }}
           >
-            <Image src={getImageUrl(request.imageId)} alt={request.title} layout="fill" objectFit="cover" />
+            <Image src={imageUrl} alt={request.title} layout="fill" objectFit="cover" />
           </Box>
         </Box>
         <Box
@@ -76,10 +77,10 @@ const RequestDetailInfoSection: React.FC<RequestDetailInfoSectionProps> = ({ req
       </Box>
       {isOverlayOpen && (
         <ImageOverlay
-          imageUrl={getImageUrl(request.imageId)}
+          imageUrl={imageUrl}
           onClose={handleOverlayClose}
           onDownload={() => {
-            window.open(getImageUrl(request.imageId), '_blank');
+            window.open(imageUrl, '_blank');
           }}
         />
       )}
