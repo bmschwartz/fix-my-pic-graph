@@ -40,11 +40,9 @@ const RequestDetailCommentTab: React.FC<RequestDetailCommentTabProps> = ({ reque
 
     try {
       await uploadComment({ text: commentText, request });
-      // Clear the comment text field
       setCommentText('');
     } catch (error) {
       console.error('Failed to submit comment:', error);
-      alert('Failed to submit comment.');
     }
   };
 
