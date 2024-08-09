@@ -18,7 +18,7 @@
     "compile": "hardhat compile && hardhat copy-artifacts",
     "compile-gql": "rm -rf src/graphql/client/* && graphclient build && mv .graphclient/* src/graphql/client/",
     "lint": "eslint --ignore-pattern \"src/graphql/**\" --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
-    "format": "prettier --ignore-pattern \"src/graphql/**\" --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
+    "format": "prettier --ignore-path .prettierignore --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\" --write",
     "postinstall": "husky",
     "preinstall": "npx only-allow pnpm",
     "test": "jest --config jest.config.ts"
