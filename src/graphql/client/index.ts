@@ -1,28 +1,31 @@
 // @ts-nocheck
-import { GraphQLResolveInfo, SelectionSetNode, FieldNode, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import MeshCache from '@graphql-mesh/cache-localforage';
+import { path as pathModule } from '@graphql-mesh/cross-helpers';
+import GraphqlHandler from '@graphql-mesh/graphql';
+import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
+import BareMerger from '@graphql-mesh/merger-bare';
+import {
+  MeshContext as BaseMeshContext,
+  ExecuteMeshFn,
+  getMesh,
+  MeshInstance,
+  MeshResolvedSource,
+  SubscribeMeshFn,
+} from '@graphql-mesh/runtime';
+import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
+import { ImportFn, MeshPlugin, MeshTransform } from '@graphql-mesh/types';
+import { DefaultLogger, gql, printWithCache, PubSub } from '@graphql-mesh/utils';
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-import { gql } from '@graphql-mesh/utils';
+import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
+import { fetch as fetchFn } from '@whatwg-node/fetch';
+import { FieldNode, GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig, SelectionSetNode } from 'graphql';
+
+import * as importedModule$0 from './sources/fixmypic-graph/introspectionSchema';
 
 import type { GetMeshOptions } from '@graphql-mesh/runtime';
 import type { YamlConfig } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
-import { DefaultLogger } from '@graphql-mesh/utils';
-import MeshCache from "@graphql-mesh/cache-localforage";
-import { fetch as fetchFn } from '@whatwg-node/fetch';
-
-import { MeshResolvedSource } from '@graphql-mesh/runtime';
-import { MeshTransform, MeshPlugin } from '@graphql-mesh/types';
-import GraphqlHandler from "@graphql-mesh/graphql"
-import BareMerger from "@graphql-mesh/merger-bare";
-import { printWithCache } from '@graphql-mesh/utils';
-import { usePersistedOperations } from '@graphql-yoga/plugin-persisted-operations';
-import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
-import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';
-import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
-import { path as pathModule } from '@graphql-mesh/cross-helpers';
-import { ImportFn } from '@graphql-mesh/types';
 import type { FixmypicGraphTypes } from './sources/fixmypic-graph/types';
-import * as importedModule$0 from "./sources/fixmypic-graph/introspectionSchema";
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -32,25 +35,21 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 
-
-
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  BigDecimal: { input: any; output: any; }
-  BigInt: { input: any; output: any; }
-  Bytes: { input: any; output: any; }
-  Int8: { input: any; output: any; }
-  Timestamp: { input: any; output: any; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
+  BigDecimal: { input: any; output: any };
+  BigInt: { input: any; output: any };
+  Bytes: { input: any; output: any };
+  Int8: { input: any; output: any };
+  Timestamp: { input: any; output: any };
 };
 
-export type Aggregation_interval =
-  | 'hour'
-  | 'day';
+export type Aggregation_interval = 'hour' | 'day';
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int']['input'];
@@ -63,9 +62,7 @@ export type Block_height = {
 };
 
 /** Defines the order direction, either ascending or descending */
-export type OrderDirection =
-  | 'asc'
-  | 'desc';
+export type OrderDirection = 'asc' | 'desc';
 
 export type PictureRequest = {
   id: Scalars['ID']['output'];
@@ -84,7 +81,6 @@ export type PictureRequest = {
   transactionHash: Scalars['Bytes']['output'];
 };
 
-
 export type PictureRequestcommentsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -92,7 +88,6 @@ export type PictureRequestcommentsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<RequestComment_filter>;
 };
-
 
 export type PictureRequestsubmissionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -278,13 +273,11 @@ export type Query = {
   _meta?: Maybe<_Meta_>;
 };
 
-
 export type QuerypictureRequestArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerypictureRequestsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -296,13 +289,11 @@ export type QuerypictureRequestsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryrequestCommentArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryrequestCommentsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -314,13 +305,11 @@ export type QueryrequestCommentsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryrequestSubmissionArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryrequestSubmissionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -332,13 +321,11 @@ export type QueryrequestSubmissionsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QuerysubmissionPurchaseArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerysubmissionPurchasesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -349,7 +336,6 @@ export type QuerysubmissionPurchasesArgs = {
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type Query_metaArgs = {
   block?: InputMaybe<Block_height>;
@@ -516,7 +502,6 @@ export type RequestSubmission = {
   blockTimestamp: Scalars['BigInt']['output'];
   transactionHash: Scalars['Bytes']['output'];
 };
-
 
 export type RequestSubmissionpurchasesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -867,13 +852,11 @@ export type Subscription = {
   _meta?: Maybe<_Meta_>;
 };
 
-
 export type SubscriptionpictureRequestArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionpictureRequestsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -885,13 +868,11 @@ export type SubscriptionpictureRequestsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionrequestCommentArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionrequestCommentsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -903,13 +884,11 @@ export type SubscriptionrequestCommentsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionrequestSubmissionArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionrequestSubmissionsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -921,13 +900,11 @@ export type SubscriptionrequestSubmissionsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionsubmissionPurchaseArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionsubmissionPurchasesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -938,7 +915,6 @@ export type SubscriptionsubmissionPurchasesArgs = {
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type Subscription_metaArgs = {
   block?: InputMaybe<Block_height>;
@@ -982,7 +958,6 @@ export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
-
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
@@ -996,7 +971,9 @@ export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
   selectionSet: string | ((fieldNode: FieldNode) => SelectionSetNode);
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
+export type StitchingResolver<TResult, TParent, TContext, TArgs> =
+  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
+  | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | ResolverWithResolve<TResult, TParent, TContext, TArgs>
@@ -1047,7 +1024,11 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
+  obj: T,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -1058,8 +1039,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   context: TContext,
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
-
-
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
@@ -1124,21 +1103,36 @@ export type ResolversParentTypes = ResolversObject<{
   _Meta_: _Meta_;
 }>;
 
-export type entityDirectiveArgs = { };
+export type entityDirectiveArgs = {};
 
-export type entityDirectiveResolver<Result, Parent, ContextType = MeshContext, Args = entityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type entityDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = MeshContext,
+  Args = entityDirectiveArgs,
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type subgraphIdDirectiveArgs = {
   id: Scalars['String']['input'];
 };
 
-export type subgraphIdDirectiveResolver<Result, Parent, ContextType = MeshContext, Args = subgraphIdDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type subgraphIdDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = MeshContext,
+  Args = subgraphIdDirectiveArgs,
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type derivedFromDirectiveArgs = {
   field: Scalars['String']['input'];
 };
 
-export type derivedFromDirectiveResolver<Result, Parent, ContextType = MeshContext, Args = derivedFromDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type derivedFromDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = MeshContext,
+  Args = derivedFromDirectiveArgs,
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export interface BigDecimalScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigDecimal'], any> {
   name: 'BigDecimal';
@@ -1156,7 +1150,10 @@ export interface Int8ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Int8';
 }
 
-export type PictureRequestResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['PictureRequest'] = ResolversParentTypes['PictureRequest']> = ResolversObject<{
+export type PictureRequestResolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['PictureRequest'] = ResolversParentTypes['PictureRequest'],
+> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1166,27 +1163,83 @@ export type PictureRequestResolvers<ContextType = MeshContext, ParentType extend
   creator?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   expiresAt?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  comments?: Resolver<Array<ResolversTypes['RequestComment']>, ParentType, ContextType, RequireFields<PictureRequestcommentsArgs, 'skip' | 'first'>>;
-  submissions?: Resolver<Array<ResolversTypes['RequestSubmission']>, ParentType, ContextType, RequireFields<PictureRequestsubmissionsArgs, 'skip' | 'first'>>;
+  comments?: Resolver<
+    Array<ResolversTypes['RequestComment']>,
+    ParentType,
+    ContextType,
+    RequireFields<PictureRequestcommentsArgs, 'skip' | 'first'>
+  >;
+  submissions?: Resolver<
+    Array<ResolversTypes['RequestSubmission']>,
+    ParentType,
+    ContextType,
+    RequireFields<PictureRequestsubmissionsArgs, 'skip' | 'first'>
+  >;
   blockNumber?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   blockTimestamp?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   transactionHash?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type QueryResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  pictureRequest?: Resolver<Maybe<ResolversTypes['PictureRequest']>, ParentType, ContextType, RequireFields<QuerypictureRequestArgs, 'id' | 'subgraphError'>>;
-  pictureRequests?: Resolver<Array<ResolversTypes['PictureRequest']>, ParentType, ContextType, RequireFields<QuerypictureRequestsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  requestComment?: Resolver<Maybe<ResolversTypes['RequestComment']>, ParentType, ContextType, RequireFields<QueryrequestCommentArgs, 'id' | 'subgraphError'>>;
-  requestComments?: Resolver<Array<ResolversTypes['RequestComment']>, ParentType, ContextType, RequireFields<QueryrequestCommentsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  requestSubmission?: Resolver<Maybe<ResolversTypes['RequestSubmission']>, ParentType, ContextType, RequireFields<QueryrequestSubmissionArgs, 'id' | 'subgraphError'>>;
-  requestSubmissions?: Resolver<Array<ResolversTypes['RequestSubmission']>, ParentType, ContextType, RequireFields<QueryrequestSubmissionsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  submissionPurchase?: Resolver<Maybe<ResolversTypes['SubmissionPurchase']>, ParentType, ContextType, RequireFields<QuerysubmissionPurchaseArgs, 'id' | 'subgraphError'>>;
-  submissionPurchases?: Resolver<Array<ResolversTypes['SubmissionPurchase']>, ParentType, ContextType, RequireFields<QuerysubmissionPurchasesArgs, 'skip' | 'first' | 'subgraphError'>>;
+export type QueryResolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
+> = ResolversObject<{
+  pictureRequest?: Resolver<
+    Maybe<ResolversTypes['PictureRequest']>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerypictureRequestArgs, 'id' | 'subgraphError'>
+  >;
+  pictureRequests?: Resolver<
+    Array<ResolversTypes['PictureRequest']>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerypictureRequestsArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  requestComment?: Resolver<
+    Maybe<ResolversTypes['RequestComment']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryrequestCommentArgs, 'id' | 'subgraphError'>
+  >;
+  requestComments?: Resolver<
+    Array<ResolversTypes['RequestComment']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryrequestCommentsArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  requestSubmission?: Resolver<
+    Maybe<ResolversTypes['RequestSubmission']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryrequestSubmissionArgs, 'id' | 'subgraphError'>
+  >;
+  requestSubmissions?: Resolver<
+    Array<ResolversTypes['RequestSubmission']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryrequestSubmissionsArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  submissionPurchase?: Resolver<
+    Maybe<ResolversTypes['SubmissionPurchase']>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerysubmissionPurchaseArgs, 'id' | 'subgraphError'>
+  >;
+  submissionPurchases?: Resolver<
+    Array<ResolversTypes['SubmissionPurchase']>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerysubmissionPurchasesArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
   _meta?: Resolver<Maybe<ResolversTypes['_Meta_']>, ParentType, ContextType, Partial<Query_metaArgs>>;
 }>;
 
-export type RequestCommentResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['RequestComment'] = ResolversParentTypes['RequestComment']> = ResolversObject<{
+export type RequestCommentResolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['RequestComment'] = ResolversParentTypes['RequestComment'],
+> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['PictureRequest'], ParentType, ContextType>;
@@ -1199,7 +1252,10 @@ export type RequestCommentResolvers<ContextType = MeshContext, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type RequestSubmissionResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['RequestSubmission'] = ResolversParentTypes['RequestSubmission']> = ResolversObject<{
+export type RequestSubmissionResolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['RequestSubmission'] = ResolversParentTypes['RequestSubmission'],
+> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   request?: Resolver<ResolversTypes['PictureRequest'], ParentType, ContextType>;
@@ -1210,14 +1266,22 @@ export type RequestSubmissionResolvers<ContextType = MeshContext, ParentType ext
   freeImageId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   encryptedImageId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   watermarkedImageId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  purchases?: Resolver<Array<ResolversTypes['SubmissionPurchase']>, ParentType, ContextType, RequireFields<RequestSubmissionpurchasesArgs, 'skip' | 'first'>>;
+  purchases?: Resolver<
+    Array<ResolversTypes['SubmissionPurchase']>,
+    ParentType,
+    ContextType,
+    RequireFields<RequestSubmissionpurchasesArgs, 'skip' | 'first'>
+  >;
   blockNumber?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   blockTimestamp?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   transactionHash?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type SubmissionPurchaseResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['SubmissionPurchase'] = ResolversParentTypes['SubmissionPurchase']> = ResolversObject<{
+export type SubmissionPurchaseResolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['SubmissionPurchase'] = ResolversParentTypes['SubmissionPurchase'],
+> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   submission?: Resolver<ResolversTypes['RequestSubmission'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
@@ -1229,23 +1293,83 @@ export type SubmissionPurchaseResolvers<ContextType = MeshContext, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
-  pictureRequest?: SubscriptionResolver<Maybe<ResolversTypes['PictureRequest']>, "pictureRequest", ParentType, ContextType, RequireFields<SubscriptionpictureRequestArgs, 'id' | 'subgraphError'>>;
-  pictureRequests?: SubscriptionResolver<Array<ResolversTypes['PictureRequest']>, "pictureRequests", ParentType, ContextType, RequireFields<SubscriptionpictureRequestsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  requestComment?: SubscriptionResolver<Maybe<ResolversTypes['RequestComment']>, "requestComment", ParentType, ContextType, RequireFields<SubscriptionrequestCommentArgs, 'id' | 'subgraphError'>>;
-  requestComments?: SubscriptionResolver<Array<ResolversTypes['RequestComment']>, "requestComments", ParentType, ContextType, RequireFields<SubscriptionrequestCommentsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  requestSubmission?: SubscriptionResolver<Maybe<ResolversTypes['RequestSubmission']>, "requestSubmission", ParentType, ContextType, RequireFields<SubscriptionrequestSubmissionArgs, 'id' | 'subgraphError'>>;
-  requestSubmissions?: SubscriptionResolver<Array<ResolversTypes['RequestSubmission']>, "requestSubmissions", ParentType, ContextType, RequireFields<SubscriptionrequestSubmissionsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  submissionPurchase?: SubscriptionResolver<Maybe<ResolversTypes['SubmissionPurchase']>, "submissionPurchase", ParentType, ContextType, RequireFields<SubscriptionsubmissionPurchaseArgs, 'id' | 'subgraphError'>>;
-  submissionPurchases?: SubscriptionResolver<Array<ResolversTypes['SubmissionPurchase']>, "submissionPurchases", ParentType, ContextType, RequireFields<SubscriptionsubmissionPurchasesArgs, 'skip' | 'first' | 'subgraphError'>>;
-  _meta?: SubscriptionResolver<Maybe<ResolversTypes['_Meta_']>, "_meta", ParentType, ContextType, Partial<Subscription_metaArgs>>;
+export type SubscriptionResolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription'],
+> = ResolversObject<{
+  pictureRequest?: SubscriptionResolver<
+    Maybe<ResolversTypes['PictureRequest']>,
+    'pictureRequest',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionpictureRequestArgs, 'id' | 'subgraphError'>
+  >;
+  pictureRequests?: SubscriptionResolver<
+    Array<ResolversTypes['PictureRequest']>,
+    'pictureRequests',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionpictureRequestsArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  requestComment?: SubscriptionResolver<
+    Maybe<ResolversTypes['RequestComment']>,
+    'requestComment',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionrequestCommentArgs, 'id' | 'subgraphError'>
+  >;
+  requestComments?: SubscriptionResolver<
+    Array<ResolversTypes['RequestComment']>,
+    'requestComments',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionrequestCommentsArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  requestSubmission?: SubscriptionResolver<
+    Maybe<ResolversTypes['RequestSubmission']>,
+    'requestSubmission',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionrequestSubmissionArgs, 'id' | 'subgraphError'>
+  >;
+  requestSubmissions?: SubscriptionResolver<
+    Array<ResolversTypes['RequestSubmission']>,
+    'requestSubmissions',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionrequestSubmissionsArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  submissionPurchase?: SubscriptionResolver<
+    Maybe<ResolversTypes['SubmissionPurchase']>,
+    'submissionPurchase',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionsubmissionPurchaseArgs, 'id' | 'subgraphError'>
+  >;
+  submissionPurchases?: SubscriptionResolver<
+    Array<ResolversTypes['SubmissionPurchase']>,
+    'submissionPurchases',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionsubmissionPurchasesArgs, 'skip' | 'first' | 'subgraphError'>
+  >;
+  _meta?: SubscriptionResolver<
+    Maybe<ResolversTypes['_Meta_']>,
+    '_meta',
+    ParentType,
+    ContextType,
+    Partial<Subscription_metaArgs>
+  >;
 }>;
 
 export interface TimestampScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Timestamp'], any> {
   name: 'Timestamp';
 }
 
-export type _Block_Resolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['_Block_'] = ResolversParentTypes['_Block_']> = ResolversObject<{
+export type _Block_Resolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['_Block_'] = ResolversParentTypes['_Block_'],
+> = ResolversObject<{
   hash?: Resolver<Maybe<ResolversTypes['Bytes']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timestamp?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -1253,7 +1377,10 @@ export type _Block_Resolvers<ContextType = MeshContext, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type _Meta_Resolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['_Meta_'] = ResolversParentTypes['_Meta_']> = ResolversObject<{
+export type _Meta_Resolvers<
+  ContextType = MeshContext,
+  ParentType extends ResolversParentTypes['_Meta_'] = ResolversParentTypes['_Meta_'],
+> = ResolversObject<{
   block?: Resolver<ResolversTypes['_Block_'], ParentType, ContextType>;
   deployment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   hasIndexingErrors?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1284,79 +1411,87 @@ export type DirectiveResolvers<ContextType = MeshContext> = ResolversObject<{
 
 export type MeshContext = FixmypicGraphTypes.Context & BaseMeshContext;
 
-
 const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '..');
 
 const importFn: ImportFn = <T>(moduleId: string) => {
-  const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
-  switch(relativeModuleId) {
-    case ".graphclient/sources/fixmypic-graph/introspectionSchema":
+  const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId)
+    .split('\\')
+    .join('/')
+    .replace(baseDir + '/', '');
+  switch (relativeModuleId) {
+    case '.graphclient/sources/fixmypic-graph/introspectionSchema':
       return Promise.resolve(importedModule$0) as T;
-    
+
     default:
       return Promise.reject(new Error(`Cannot find module '${relativeModuleId}'.`));
   }
 };
 
-const rootStore = new MeshStore('.graphclient', new FsStoreStorageAdapter({
-  cwd: baseDir,
-  importFn,
-  fileType: "ts",
-}), {
-  readonly: true,
-  validate: false
-});
+const rootStore = new MeshStore(
+  '.graphclient',
+  new FsStoreStorageAdapter({
+    cwd: baseDir,
+    importFn,
+    fileType: 'ts',
+  }),
+  {
+    readonly: true,
+    validate: false,
+  }
+);
 
-export const rawServeConfig: YamlConfig.Config['serve'] = undefined as any
+export const rawServeConfig: YamlConfig.Config['serve'] = undefined as any;
 export async function getMeshOptions(): Promise<GetMeshOptions> {
-const pubsub = new PubSub();
-const sourcesStore = rootStore.child('sources');
-const logger = new DefaultLogger("GraphClient");
-const cache = new (MeshCache as any)({
-      ...({} as any),
-      importFn,
-      store: rootStore.child('cache'),
-      pubsub,
-      logger,
-    } as any)
+  const pubsub = new PubSub();
+  const sourcesStore = rootStore.child('sources');
+  const logger = new DefaultLogger('GraphClient');
+  const cache = new (MeshCache as any)({
+    ...({} as any),
+    importFn,
+    store: rootStore.child('cache'),
+    pubsub,
+    logger,
+  } as any);
 
-const sources: MeshResolvedSource[] = [];
-const transforms: MeshTransform[] = [];
-const additionalEnvelopPlugins: MeshPlugin<any>[] = [];
-const fixmypicGraphTransforms = [];
-const additionalTypeDefs = [] as any[];
-const fixmypicGraphHandler = new GraphqlHandler({
-              name: "fixmypic-graph",
-              config: {"endpoint":"http://localhost:8000/subgraphs/name/fixmypic-graph"},
-              baseDir,
-              cache,
-              pubsub,
-              store: sourcesStore.child("fixmypic-graph"),
-              logger: logger.child("fixmypic-graph"),
-              importFn,
-            });
-sources[0] = {
-          name: 'fixmypic-graph',
-          handler: fixmypicGraphHandler,
-          transforms: fixmypicGraphTransforms
-        }
-const additionalResolvers = [] as any[]
-const merger = new(BareMerger as any)({
-        cache,
-        pubsub,
-        logger: logger.child('bareMerger'),
-        store: rootStore.child('bareMerger')
-      })
-const documentHashMap = {
-        "7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac": GetPictureRequestDocument,
-"8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108": GetPictureRequestsDocument
-      }
-additionalEnvelopPlugins.push(usePersistedOperations({
-        getPersistedOperation(key) {
-          return documentHashMap[key];
-        },
-        ...{}
-      }))
+  const sources: MeshResolvedSource[] = [];
+  const transforms: MeshTransform[] = [];
+  const additionalEnvelopPlugins: MeshPlugin<any>[] = [];
+  const fixmypicGraphTransforms = [];
+  const additionalTypeDefs = [] as any[];
+  const fixmypicGraphHandler = new GraphqlHandler({
+    name: 'fixmypic-graph',
+    config: { endpoint: 'http://localhost:8000/subgraphs/name/fixmypic-graph' },
+    baseDir,
+    cache,
+    pubsub,
+    store: sourcesStore.child('fixmypic-graph'),
+    logger: logger.child('fixmypic-graph'),
+    importFn,
+  });
+  sources[0] = {
+    name: 'fixmypic-graph',
+    handler: fixmypicGraphHandler,
+    transforms: fixmypicGraphTransforms,
+  };
+  const additionalResolvers = [] as any[];
+  const merger = new (BareMerger as any)({
+    cache,
+    pubsub,
+    logger: logger.child('bareMerger'),
+    store: rootStore.child('bareMerger'),
+  });
+  const documentHashMap = {
+    '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac': GetPictureRequestDocument,
+    '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108': GetPictureRequestsDocument,
+  };
+  additionalEnvelopPlugins.push(
+    usePersistedOperations({
+      getPersistedOperation(key) {
+        return documentHashMap[key];
+      },
+      ...{},
+    })
+  );
 
   return {
     sources,
@@ -1370,22 +1505,23 @@ additionalEnvelopPlugins.push(usePersistedOperations({
     additionalEnvelopPlugins,
     get documents() {
       return [
-      {
-        document: GetPictureRequestDocument,
-        get rawSDL() {
-          return printWithCache(GetPictureRequestDocument);
+        {
+          document: GetPictureRequestDocument,
+          get rawSDL() {
+            return printWithCache(GetPictureRequestDocument);
+          },
+          location: 'GetPictureRequestDocument.graphql',
+          sha256Hash: '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac',
         },
-        location: 'GetPictureRequestDocument.graphql',
-        sha256Hash: '7d4ffd17e47b5e3852df435c39e0ff8a8d26888fff65e54ab3a97cce4938e3ac'
-      },{
-        document: GetPictureRequestsDocument,
-        get rawSDL() {
-          return printWithCache(GetPictureRequestsDocument);
+        {
+          document: GetPictureRequestsDocument,
+          get rawSDL() {
+            return printWithCache(GetPictureRequestsDocument);
+          },
+          location: 'GetPictureRequestsDocument.graphql',
+          sha256Hash: '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108',
         },
-        location: 'GetPictureRequestsDocument.graphql',
-        sha256Hash: '8ac9617e059b57499d218e773b34cc906da473324ff1f386219b6eb557491108'
-      }
-    ];
+      ];
     },
     fetchFn,
   };
@@ -1396,9 +1532,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
     baseDir,
     getBuiltMesh: getBuiltGraphClient,
     rawServeConfig: undefined,
-  })
+  });
 }
-
 
 let meshInstance$: Promise<MeshInstance> | undefined;
 
@@ -1409,148 +1544,208 @@ export function getBuiltGraphClient(): Promise<MeshInstance> {
     if (pollingInterval) {
       setInterval(() => {
         getMeshOptions()
-        .then(meshOptions => getMesh(meshOptions))
-        .then(newMesh =>
-          meshInstance$.then(oldMesh => {
-            oldMesh.destroy()
-            meshInstance$ = Promise.resolve(newMesh)
-          })
-        ).catch(err => {
-          console.error("Mesh polling failed so the existing version will be used:", err);
-        });
-      }, pollingInterval)
+          .then((meshOptions) => getMesh(meshOptions))
+          .then((newMesh) =>
+            meshInstance$.then((oldMesh) => {
+              oldMesh.destroy();
+              meshInstance$ = Promise.resolve(newMesh);
+            })
+          )
+          .catch((err) => {
+            console.error('Mesh polling failed so the existing version will be used:', err);
+          });
+      }, pollingInterval);
     }
-    meshInstance$ = getMeshOptions().then(meshOptions => getMesh(meshOptions)).then(mesh => {
-      const id = mesh.pubsub.subscribe('destroy', () => {
-        meshInstance$ = undefined;
-        mesh.pubsub.unsubscribe(id);
+    meshInstance$ = getMeshOptions()
+      .then((meshOptions) => getMesh(meshOptions))
+      .then((mesh) => {
+        const id = mesh.pubsub.subscribe('destroy', () => {
+          meshInstance$ = undefined;
+          mesh.pubsub.unsubscribe(id);
+        });
+        return mesh;
       });
-      return mesh;
-    });
   }
   return meshInstance$;
 }
 
 export const execute: ExecuteMeshFn = (...args) => getBuiltGraphClient().then(({ execute }) => execute(...args));
 
-export const subscribe: SubscribeMeshFn = (...args) => getBuiltGraphClient().then(({ subscribe }) => subscribe(...args));
+export const subscribe: SubscribeMeshFn = (...args) =>
+  getBuiltGraphClient().then(({ subscribe }) => subscribe(...args));
 export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
   const sdkRequester$ = getBuiltGraphClient().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
-  return getSdk<TOperationContext, TGlobalContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
+  return getSdk<TOperationContext, TGlobalContext>((...args) =>
+    sdkRequester$.then((sdkRequester) => sdkRequester(...args))
+  );
 }
 export type CommentFragmentFragment = Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>;
 
-export type PictureRequestFragmentFragment = (
-  Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
-  & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<(
-    Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>
-    & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
-  )> }
-);
+export type PictureRequestFragmentFragment = Pick<
+  PictureRequest,
+  'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'
+> & {
+  comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>;
+  submissions: Array<
+    Pick<
+      RequestSubmission,
+      | 'id'
+      | 'submitter'
+      | 'description'
+      | 'price'
+      | 'createdAt'
+      | 'freeImageId'
+      | 'watermarkedImageId'
+      | 'encryptedImageId'
+    > & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
+  >;
+};
 
-export type RequestSubmissionFragmentFragment = Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>;
+export type RequestSubmissionFragmentFragment = Pick<
+  RequestSubmission,
+  'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'
+>;
 
-export type SubmissionPurchaseFragmentFragment = { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> };
+export type SubmissionPurchaseFragmentFragment = {
+  purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>>;
+};
 
 export type GetPictureRequestQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
+export type GetPictureRequestQuery = {
+  pictureRequest?: Maybe<
+    Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'> & {
+      comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>;
+      submissions: Array<
+        Pick<
+          RequestSubmission,
+          | 'id'
+          | 'submitter'
+          | 'description'
+          | 'price'
+          | 'createdAt'
+          | 'freeImageId'
+          | 'watermarkedImageId'
+          | 'encryptedImageId'
+        > & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
+      >;
+    }
+  >;
+};
 
-export type GetPictureRequestQuery = { pictureRequest?: Maybe<(
-    Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
-    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<(
-      Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>
-      & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
-    )> }
-  )> };
+export type GetPictureRequestsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetPictureRequestsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetPictureRequestsQuery = { pictureRequests: Array<(
-    Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'>
-    & { comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>, submissions: Array<(
-      Pick<RequestSubmission, 'id' | 'submitter' | 'description' | 'price' | 'createdAt' | 'freeImageId' | 'watermarkedImageId' | 'encryptedImageId'>
-      & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
-    )> }
-  )> };
+export type GetPictureRequestsQuery = {
+  pictureRequests: Array<
+    Pick<PictureRequest, 'id' | 'title' | 'description' | 'imageId' | 'budget' | 'creator' | 'createdAt'> & {
+      comments: Array<Pick<RequestComment, 'id' | 'commenter' | 'text' | 'createdAt'>>;
+      submissions: Array<
+        Pick<
+          RequestSubmission,
+          | 'id'
+          | 'submitter'
+          | 'description'
+          | 'price'
+          | 'createdAt'
+          | 'freeImageId'
+          | 'watermarkedImageId'
+          | 'encryptedImageId'
+        > & { purchases: Array<Pick<SubmissionPurchase, 'id' | 'purchaser' | 'purchaseDate'>> }
+      >;
+    }
+  >;
+};
 
 export const CommentFragmentFragmentDoc = gql`
-    fragment CommentFragment on RequestComment {
-  id
-  commenter
-  text
-  createdAt
-}
-    ` as unknown as DocumentNode<CommentFragmentFragment, unknown>;
-export const RequestSubmissionFragmentFragmentDoc = gql`
-    fragment RequestSubmissionFragment on RequestSubmission {
-  id
-  submitter
-  description
-  price
-  createdAt
-  freeImageId
-  watermarkedImageId
-  encryptedImageId
-}
-    ` as unknown as DocumentNode<RequestSubmissionFragmentFragment, unknown>;
-export const SubmissionPurchaseFragmentFragmentDoc = gql`
-    fragment SubmissionPurchaseFragment on RequestSubmission {
-  purchases {
+  fragment CommentFragment on RequestComment {
     id
-    purchaser
-    purchaseDate
+    commenter
+    text
+    createdAt
   }
-}
-    ` as unknown as DocumentNode<SubmissionPurchaseFragmentFragment, unknown>;
+` as unknown as DocumentNode<CommentFragmentFragment, unknown>;
+export const RequestSubmissionFragmentFragmentDoc = gql`
+  fragment RequestSubmissionFragment on RequestSubmission {
+    id
+    submitter
+    description
+    price
+    createdAt
+    freeImageId
+    watermarkedImageId
+    encryptedImageId
+  }
+` as unknown as DocumentNode<RequestSubmissionFragmentFragment, unknown>;
+export const SubmissionPurchaseFragmentFragmentDoc = gql`
+  fragment SubmissionPurchaseFragment on RequestSubmission {
+    purchases {
+      id
+      purchaser
+      purchaseDate
+    }
+  }
+` as unknown as DocumentNode<SubmissionPurchaseFragmentFragment, unknown>;
 export const PictureRequestFragmentFragmentDoc = gql`
-    fragment PictureRequestFragment on PictureRequest {
-  id
-  title
-  description
-  imageId
-  budget
-  creator
-  createdAt
-  comments {
-    ...CommentFragment
+  fragment PictureRequestFragment on PictureRequest {
+    id
+    title
+    description
+    imageId
+    budget
+    creator
+    createdAt
+    comments {
+      ...CommentFragment
+    }
+    submissions {
+      ...RequestSubmissionFragment
+      ...SubmissionPurchaseFragment
+    }
   }
-  submissions {
-    ...RequestSubmissionFragment
-    ...SubmissionPurchaseFragment
-  }
-}
-    ${CommentFragmentFragmentDoc}
-${RequestSubmissionFragmentFragmentDoc}
-${SubmissionPurchaseFragmentFragmentDoc}` as unknown as DocumentNode<PictureRequestFragmentFragment, unknown>;
+  ${CommentFragmentFragmentDoc}
+  ${RequestSubmissionFragmentFragmentDoc}
+  ${SubmissionPurchaseFragmentFragmentDoc}
+` as unknown as DocumentNode<PictureRequestFragmentFragment, unknown>;
 export const GetPictureRequestDocument = gql`
-    query GetPictureRequest($id: ID!) {
-  pictureRequest(id: $id) {
-    ...PictureRequestFragment
+  query GetPictureRequest($id: ID!) {
+    pictureRequest(id: $id) {
+      ...PictureRequestFragment
+    }
   }
-}
-    ${PictureRequestFragmentFragmentDoc}` as unknown as DocumentNode<GetPictureRequestQuery, GetPictureRequestQueryVariables>;
+  ${PictureRequestFragmentFragmentDoc}
+` as unknown as DocumentNode<GetPictureRequestQuery, GetPictureRequestQueryVariables>;
 export const GetPictureRequestsDocument = gql`
-    query GetPictureRequests {
-  pictureRequests {
-    ...PictureRequestFragment
+  query GetPictureRequests {
+    pictureRequests {
+      ...PictureRequestFragment
+    }
   }
-}
-    ${PictureRequestFragmentFragmentDoc}` as unknown as DocumentNode<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>;
+  ${PictureRequestFragmentFragmentDoc}
+` as unknown as DocumentNode<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>;
 
-
-
-export type Requester<C = {}, E = unknown> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
+export type Requester<C = {}, E = unknown> = <R, V>(
+  doc: DocumentNode,
+  vars?: V,
+  options?: C
+) => Promise<R> | AsyncIterable<R>;
 export function getSdk<C, E>(requester: Requester<C, E>) {
   return {
     GetPictureRequest(variables: GetPictureRequestQueryVariables, options?: C): Promise<GetPictureRequestQuery> {
-      return requester<GetPictureRequestQuery, GetPictureRequestQueryVariables>(GetPictureRequestDocument, variables, options) as Promise<GetPictureRequestQuery>;
+      return requester<GetPictureRequestQuery, GetPictureRequestQueryVariables>(
+        GetPictureRequestDocument,
+        variables,
+        options
+      ) as Promise<GetPictureRequestQuery>;
     },
     GetPictureRequests(variables?: GetPictureRequestsQueryVariables, options?: C): Promise<GetPictureRequestsQuery> {
-      return requester<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>(GetPictureRequestsDocument, variables, options) as Promise<GetPictureRequestsQuery>;
-    }
+      return requester<GetPictureRequestsQuery, GetPictureRequestsQueryVariables>(
+        GetPictureRequestsDocument,
+        variables,
+        options
+      ) as Promise<GetPictureRequestsQuery>;
+    },
   };
 }
 export type Sdk = ReturnType<typeof getSdk>;

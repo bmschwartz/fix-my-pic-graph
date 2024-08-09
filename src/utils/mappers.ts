@@ -2,7 +2,6 @@ import { RequestComment } from '@/types/comment';
 import { SubmissionPurchase } from '@/types/purchase';
 import { PartialRequest } from '@/types/request';
 import { RequestSubmission } from '@/types/submission';
-import { getLogger } from './logging';
 import { removeNullishValues } from './object';
 
 import type {

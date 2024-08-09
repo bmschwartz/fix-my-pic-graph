@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import { useContractService } from '@/hooks/useContractService';
-import { useImageStore } from '@/hooks/useImageStore';
 import { useWallet } from '@/hooks/useWallet';
 import { RequestSubmission } from '@/types/submission';
 import FMPTypography from '../common/FMPTypography';
@@ -21,7 +20,6 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, ima
   const router = useRouter();
 
   const { contractService } = useContractService();
-  const { getDecryptedImageUrl } = useImageStore();
   const { selectedWallet, selectedAccount } = useWallet();
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -37,10 +35,6 @@ const SubmissionListItem: React.FC<SubmissionListItemProps> = ({ submission, ima
 
   const handleOverlayClose = () => {
     setIsOverlayOpen(false);
-  };
-
-  const handleOpenDialog = () => {
-    setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {

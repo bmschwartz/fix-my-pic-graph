@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 
 import { useImageStore } from '@/hooks/useImageStore';
 import { Request } from '@/types/request';
-import { getLogger } from '@/utils/logging';
 import LinkButton from '../common/LinkButton';
 import SubmissionListItem from '../submission/SubmissionListItem';
 
@@ -24,8 +23,6 @@ const EmptyState: React.FC = () => {
     </Box>
   );
 };
-
-const logger = getLogger('RequestDetailSubmissionTab');
 
 function useDeepCompareMemoize<T>(value: T): T {
   const ref = React.useRef<T>(value);
@@ -75,7 +72,7 @@ const RequestDetailSubmissionTab: React.FC<RequestDetailSubmissionTabProps> = ({
     } else {
       setLoadingImageUrls(false);
     }
-  }, [submissions, setLoadingImageUrls, getImageUrlToShow]);
+  }, [submissions, loadedImages, setLoadingImageUrls, getImageUrlToShow]);
 
   return (
     <Box sx={{ mt: 3, position: 'relative' }}>

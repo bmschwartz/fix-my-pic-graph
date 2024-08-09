@@ -147,9 +147,8 @@ async function createFixMyPicContractService(factoryAddress: string): Promise<Fi
 
     const fixMyPicFactory = new Contract(factoryAddress, FixMyPicFactorySchema.abi, await _getSigner(wallet, account));
 
-    let receipt: ContractTransactionReceipt;
     const tx = await fixMyPicFactory.purchaseSubmission(submissionAddress, { value: priceInWei });
-    receipt = await tx.wait();
+    const receipt: ContractTransactionReceipt = await tx.wait();
 
     const event = receipt.logs
       .map((log) => fixMyPicFactory.interface.parseLog(log))
