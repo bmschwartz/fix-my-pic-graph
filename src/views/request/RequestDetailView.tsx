@@ -12,8 +12,7 @@ const RequestDetailView: React.FC<RequestDetailViewProps> = ({ request }) => {
   return (
     <Box sx={{ my: 4 }}>
       <BackButton href="/" sx={{ mb: 4 }} />
-      {/* </Box> */}
-      {/* // <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3 }}> */}
+
       <RequestDetailInfoSection request={request} />
       <RequestDetailTabSection request={request} />
     </Box>
